@@ -14,7 +14,6 @@ public class Socio {
     private int id;
     private String nombre;
     private String dni;
-    private String cobase;
     private String estado;
     private Date fechaIngreso;
 
@@ -25,7 +24,6 @@ public class Socio {
         this.id = id;
         this.nombre = nombre;
         this.dni = dni;
-        this.cobase = cobase;
         this.estado = estado;
         this.fechaIngreso = fechaIngreso;
     }
@@ -40,9 +38,7 @@ public class Socio {
     public String getDni() { 
         return dni;
     }
-    public String getCobase() { 
-        return cobase; 
-    }
+ 
     public String getEstado() { 
         return estado; 
     }
@@ -60,9 +56,7 @@ public class Socio {
     public void setDni(String dni) { 
         this.dni = dni;
     }
-    public void setCobase(String cobase) { 
-        this.cobase = cobase;
-    }
+   
     public void setEstado(String estado) { 
         this.estado = estado;
     }

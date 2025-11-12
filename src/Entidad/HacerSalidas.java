@@ -1,11 +1,12 @@
 package Entidad;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Representa la salida de un producto hacia un destino.
  */
-public class SalidaProducto {
+public class HacerSalidas {
     private int id;
     private Producto producto;
     private Usuario usuario;
@@ -15,10 +16,12 @@ public class SalidaProducto {
     private Timestamp fechaRegistro;
     private String guiaSalida;
 
-    public SalidaProducto() {
+    public HacerSalidas() {
+         // Establece la fecha actual al momento de crear el objeto
+        this.fechaRegistro = Timestamp.valueOf(LocalDateTime.now());
     }
 
-    public SalidaProducto(int id, Producto producto, Usuario usuario, double cantidad,
+    public HacerSalidas(int id, Producto producto, Usuario usuario, double cantidad,
                           String destino, String observaciones, Timestamp fechaRegistro, String guiaSalida) {
         this.id = id;
         this.producto = producto;
@@ -26,7 +29,8 @@ public class SalidaProducto {
         this.cantidad = cantidad;
         this.destino = destino;
         this.observaciones = observaciones;
-        this.fechaRegistro = fechaRegistro;
+        // Si la fecha no se pasa, usa la del sistema
+        this.fechaRegistro = (fechaRegistro != null) ? fechaRegistro : Timestamp.valueOf(LocalDateTime.now());
         this.guiaSalida = guiaSalida;
     }
 

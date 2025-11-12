@@ -6,7 +6,7 @@ package AccesoDatos;
 
 import Entidad.Producto;
 import Entidad.Usuario;
-import Entidad.SalidaProducto;
+import Entidad.HacerSalidas;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,8 +23,8 @@ import java.util.ArrayList;
 public class BDSalidaProducto implements ICRUD {
 
     @Override
-    public ArrayList<SalidaProducto> listar() throws Exception {
-        ArrayList<SalidaProducto> lista = new ArrayList<>();
+    public ArrayList<HacerSalidas> listar() throws Exception {
+        ArrayList<HacerSalidas> lista = new ArrayList<>();
         String sql = """
             SELECT sp.*, 
                    p.id AS id_producto, p.nombre AS nombre_producto,
@@ -40,7 +40,7 @@ public class BDSalidaProducto implements ICRUD {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                SalidaProducto sp = construirSalidaDesdeResultSet(rs);
+                HacerSalidas sp = construirSalidaDesdeResultSet(rs);
                 lista.add(sp);
             }
 
@@ -53,7 +53,7 @@ public class BDSalidaProducto implements ICRUD {
 
     @Override
     public int crear(Object object) throws SQLException {
-        SalidaProducto sp = (SalidaProducto) object;
+        HacerSalidas sp = (HacerSalidas) object;
         String sql = """
             INSERT INTO salida_producto 
             (id_producto, id_usuario, cantidad, destino, observaciones, fecha_registro, guia_salida, estado)
@@ -86,7 +86,7 @@ public class BDSalidaProducto implements ICRUD {
 
     @Override
     public void actualizar(int id, Object object) throws Exception {
-        SalidaProducto sp = (SalidaProducto) object;
+        HacerSalidas sp = (HacerSalidas) object;
 
         String sql = """
             UPDATE salida_producto
@@ -133,8 +133,8 @@ public class BDSalidaProducto implements ICRUD {
     }
 
     @Override
-    public SalidaProducto get(int id) throws Exception {
-        SalidaProducto sp = null;
+    public HacerSalidas get(int id) throws Exception {
+        HacerSalidas sp = null;
         String sql = """
             SELECT sp.*, 
                    p.id AS id_producto, p.nombre AS nombre_producto,
@@ -164,8 +164,8 @@ public class BDSalidaProducto implements ICRUD {
     }
 
     // 🔍 Método auxiliar para construir un objeto SalidaProducto desde un ResultSet
-    private SalidaProducto construirSalidaDesdeResultSet(ResultSet rs) throws SQLException {
-        return new SalidaProducto(
+    private HacerSalidas construirSalidaDesdeResultSet(ResultSet rs) throws SQLException {
+        return new HacerSalidas(
                 rs.getInt("id"),
                 new Producto(rs.getInt("id_producto"), rs.getString("nombre_producto")),
                 new Usuario(rs.getInt("id_usuario"), rs.getString("nombre_usuario")),
@@ -178,8 +178,8 @@ public class BDSalidaProducto implements ICRUD {
     }
 
     // 🔎 Método adicional de búsqueda (opcional)
-    public ArrayList<SalidaProducto> buscarPorDestino(String destino) throws Exception {
-        ArrayList<SalidaProducto> lista = new ArrayList<>();
+    public ArrayList<HacerSalidas> buscarPorDestino(String destino) throws Exception {
+        ArrayList<HacerSalidas> lista = new ArrayList<>();
         String sql = """
             SELECT sp.*, 
                    p.id AS id_producto, p.nombre AS nombre_producto,
@@ -197,7 +197,7 @@ public class BDSalidaProducto implements ICRUD {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    SalidaProducto sp = construirSalidaDesdeResultSet(rs);
+                    HacerSalidas sp = construirSalidaDesdeResultSet(rs);
                     lista.add(sp);
                 }
             }

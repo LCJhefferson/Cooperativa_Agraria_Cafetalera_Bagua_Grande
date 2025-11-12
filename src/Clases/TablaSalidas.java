@@ -12,12 +12,12 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author jheff
  */
-public class TablaCompras {
+public class TablaSalidas {
     //creamos un metodo para ver la tabla 
-    public void ver_tabla(JTable tablaCompras){
+    public void ver_tabla(JTable tablaSalidas){
        
         //AQUI ESTOMS RENDRESISANDO LA TABLA
-        tablaCompras.setDefaultRenderer(Object.class, new RenderTabla());
+        tablaSalidas.setDefaultRenderer(Object.class, new RenderTabla());
         //
         JButton btnpdf = new JButton("pdf");
         btnpdf.setName("b_pdf");
@@ -32,19 +32,19 @@ public class TablaCompras {
         btnGuardar.setName("b_guardar");
 
         
-     DefaultTableModel v_tabla = new DefaultTableModel(
+     DefaultTableModel v_tablaSalidas = new DefaultTableModel(
     new Object[][] {
-        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez",btnpdf,btnEliminar,btnModificar},
-        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez", btnpdf, btnEliminar, btnModificar},
+        {"FTO","120","000023","planta de procesamiento","ninguna",btnpdf,btnEliminar,btnModificar},
+        {"FT", "85", "000024", "planta de procesamiento","muy humedo", btnpdf, btnEliminar, btnModificar},
     },
-    new Object[]{"PRODUCTO","CANTIDAD","PRECIO","COBASE","HUMEDAD","RENDIMIENTO","GUIA DE REMISION","SOCIO","PDF","ELIMINAR","MODIFICAR"}
+    new Object[]{"PRODUCTO","CANTIDAD","PRECIO","NUMERO DE ORDEN","DESTINO","PDF","ELIMINAR","MODIFICAR"}
 ) {
     boolean editable = false; // bandera para saber si se puede editar
 
     @Override
     public boolean isCellEditable(int row, int column) {
         // permite editar solo si está en modo edición y no es una columna de botones
-        return editable && column < 8;
+        return editable && column < 6;
     }
 
     public void setEditable(boolean editable) {
@@ -54,15 +54,11 @@ public class TablaCompras {
 
     
         
-        tablaCompras.setModel(v_tabla);
+        tablaSalidas.setModel(v_tablaSalidas);
         
-        //codigo par ahacer la trnasicion de botones de modificar a guardar 
-        
-        
-       
         
         //hacemos las celdas mas grandes
-        tablaCompras.setRowHeight(30);
+        tablaSalidas.setRowHeight(30);
     }       
   
 }
