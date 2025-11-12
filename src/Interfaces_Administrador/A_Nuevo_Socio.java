@@ -22,7 +22,6 @@ public class A_Nuevo_Socio extends javax.swing.JInternalFrame {
     private String nombre;
     private String dni;
     private String estado;
-    private Date fechaIngreso;
     
     
     
