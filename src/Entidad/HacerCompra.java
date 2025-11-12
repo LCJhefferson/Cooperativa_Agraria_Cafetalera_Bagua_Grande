@@ -1,6 +1,8 @@
 package Entidad;
 
+import Interfaces_Almacenero.Compras;
 import java.sql.Timestamp; 
+import java.time.LocalDateTime;
 
 
 /**
@@ -8,7 +10,7 @@ import java.sql.Timestamp;
  * 
  * @author LENOVO
  */
-public class IngresoProducto {
+public class HacerCompra {
     private int id;
     private Producto producto;
     private Socio socio;
@@ -21,10 +23,12 @@ public class IngresoProducto {
     private double precio;
     private String rendimiento;
 
-    public IngresoProducto() {
+    public HacerCompra() {
+         // Establece la fecha actual al momento de crear el objeto
+        this.fechaRegistro = Timestamp.valueOf(LocalDateTime.now());
     }
 
-    public IngresoProducto(int id, Producto producto, Socio socio, Usuario usuario, double cantidad,
+    public HacerCompra(int id, Producto producto, Socio socio, Usuario usuario, double cantidad,
                            String cobase, Timestamp fechaRegistro, String guiaIngreso,
                            double humedad, double precio, String rendimiento) {
         this.id = id;
@@ -33,7 +37,8 @@ public class IngresoProducto {
         this.usuario = usuario;
         this.cantidad = cantidad;
         this.cobase = cobase;
-        this.fechaRegistro = fechaRegistro;
+         // Si la fecha no se pasa, usa la del sistema
+        this.fechaRegistro = (fechaRegistro != null) ? fechaRegistro : Timestamp.valueOf(LocalDateTime.now());
         this.guiaIngreso = guiaIngreso;
         this.humedad = humedad;
         this.precio = precio;
@@ -113,4 +118,8 @@ public class IngresoProducto {
     public String toString() {
         return producto + " - " + cantidad + " unidades";
     }
+    
+  
+    
+    
 }

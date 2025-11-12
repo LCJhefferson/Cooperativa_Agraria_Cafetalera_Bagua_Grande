@@ -1,6 +1,6 @@
 package AccesoDatos;
 
-import Entidad.IngresoProducto;
+import Entidad.HacerCompra;
 import Entidad.Producto;
 import Entidad.Socio;
 import Entidad.Usuario;
@@ -21,8 +21,8 @@ import java.util.ArrayList;
 public class BDIngresoProducto implements ICRUD {
 
     @Override
-    public ArrayList<IngresoProducto> listar() throws Exception {
-        ArrayList<IngresoProducto> lista = new ArrayList<>();
+    public ArrayList<HacerCompra> listar() throws Exception {
+        ArrayList<HacerCompra> lista = new ArrayList<>();
         String sql = """
             SELECT ip.*, 
                    p.id AS id_producto, p.nombre AS nombre_producto,
@@ -40,7 +40,7 @@ public class BDIngresoProducto implements ICRUD {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                IngresoProducto ip = construirIngresoDesdeResultSet(rs);
+                HacerCompra ip = construirIngresoDesdeResultSet(rs);
                 lista.add(ip);
             }
 
@@ -53,7 +53,7 @@ public class BDIngresoProducto implements ICRUD {
 
     @Override
     public int crear(Object object) throws SQLException {
-        IngresoProducto ip = (IngresoProducto) object;
+        HacerCompra ip = (HacerCompra) object;
         String sql = """
             INSERT INTO ingreso_producto 
             (id_producto, id_socio, id_usuario, cantidad, cobase, fecha_registro, guia_ingreso, humedad, precio, rendimiento, estado)
@@ -83,7 +83,7 @@ public class BDIngresoProducto implements ICRUD {
 
     @Override
     public void actualizar(int id, Object object) throws Exception {
-        IngresoProducto ip = (IngresoProducto) object;
+        HacerCompra ip = (HacerCompra) object;
         String sql = """
             UPDATE ingreso_producto
             SET id_producto = ?, id_socio = ?, id_usuario = ?, cantidad = ?, cobase = ?, 
@@ -131,8 +131,8 @@ public class BDIngresoProducto implements ICRUD {
     }
 
     @Override
-    public IngresoProducto get(int id) throws Exception {
-        IngresoProducto ip = null;
+    public HacerCompra get(int id) throws Exception {
+        HacerCompra ip = null;
         String sql = """
             SELECT ip.*, 
                    p.id AS id_producto, p.nombre AS nombre_producto,
@@ -163,8 +163,8 @@ public class BDIngresoProducto implements ICRUD {
         return ip;
     }
 
-    private IngresoProducto construirIngresoDesdeResultSet(ResultSet rs) throws SQLException {
-        return new IngresoProducto(
+    private HacerCompra construirIngresoDesdeResultSet(ResultSet rs) throws SQLException {
+        return new HacerCompra(
                 rs.getInt("id"),
                 new Producto(rs.getInt("id_producto"), rs.getString("nombre_producto")),
                 new Socio(rs.getInt("id_socio"), rs.getString("nombre_socio"), null, null, null, null),

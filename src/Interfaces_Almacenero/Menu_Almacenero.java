@@ -370,7 +370,7 @@ Compras jif = Compras.getInstancia();
     }else{
        Principal.add(jif);
         jif.setVisible(true);
-    }
+    } 
 actualizarNavegacion("Registrar Compras", "Registrar Compras");
     }//GEN-LAST:event_JBT_RegistrarCompraActionPerformed
 
