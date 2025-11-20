@@ -45,7 +45,7 @@ public class Login extends javax.swing.JFrame {
         TxtTexto = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         TxtContraseña = new javax.swing.JPasswordField();
-        Recuperar_Contrasena = new javax.swing.JLabel();
+        lblRecuperar = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
@@ -115,8 +115,13 @@ public class Login extends javax.swing.JFrame {
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("COOPERATIVA AGRARIA CAFETALERA");
 
-        Recuperar_Contrasena.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        Recuperar_Contrasena.setText("Recuperar contraseña");
+        lblRecuperar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblRecuperar.setText("Recuperar contraseña");
+        lblRecuperar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblRecuperarMouseClicked(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI Black", 2, 24)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -140,7 +145,7 @@ public class Login extends javax.swing.JFrame {
                                         .addComponent(CbxTipoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(TxtTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(BtnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(Recuperar_Contrasena, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(lblRecuperar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(53, 53, 53))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -179,7 +184,7 @@ public class Login extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(BtnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(Recuperar_Contrasena)
+                .addComponent(lblRecuperar)
                 .addContainerGap(194, Short.MAX_VALUE))
         );
 
@@ -281,6 +286,11 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_CbxTipoUsuarioActionPerformed
 
+    private void lblRecuperarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRecuperarMouseClicked
+  new Interfaces_generales.ValidarRecuperacion().setVisible(true);
+    this.dispose();
+    }//GEN-LAST:event_lblRecuperarMouseClicked
+
     
     /**
      * @param args the command line arguments
@@ -320,7 +330,6 @@ public class Login extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnIniciar;
     private javax.swing.JComboBox<String> CbxTipoUsuario;
-    private javax.swing.JLabel Recuperar_Contrasena;
     private javax.swing.JPasswordField TxtContraseña;
     private javax.swing.JLabel TxtTexto;
     private javax.swing.JTextField TxtUsuario;
@@ -333,5 +342,6 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lblRecuperar;
     // End of variables declaration//GEN-END:variables
 }

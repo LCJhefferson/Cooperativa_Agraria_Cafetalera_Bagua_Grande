@@ -82,4 +82,54 @@ public class UsuarioDAO {
 
         return -1; // no existe
     }
+    
+    public String obtenerCorreoPorUsuario(String usuario) {
+    String sql = "SELECT iu.correo FROM usuarios u "
+               + "INNER JOIN info_usuario iu ON u.id = iu.id_usuario "
+               + "WHERE u.Usuario = ?";
+
+    try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setString(1, usuario);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("correo");
+        }
+
+    } catch (Exception e) {
+        System.out.println("Error obtener correo: " + e.getMessage());
+    }
+    return null;
+}
+
+    
+    public void actualizarClave(String usuario, String nuevaClave) {
+    String sql = "UPDATE usuarios SET contraseña=? WHERE Usuario=?";
+
+    try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setString(1, nuevaClave);
+        ps.setString(2, usuario);
+        ps.executeUpdate();
+
+    } catch (Exception e) {
+        System.out.println("Error actualizar clave: " + e.getMessage());
+    }
+}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

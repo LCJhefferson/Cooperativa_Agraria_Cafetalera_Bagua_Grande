@@ -111,7 +111,7 @@
                                               <Component id="TxtTexto" alignment="0" min="-2" pref="250" max="-2" attributes="0"/>
                                               <Component id="BtnIniciar" alignment="0" min="-2" pref="270" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="Recuperar_Contrasena" alignment="1" min="-2" pref="270" max="-2" attributes="0"/>
+                                          <Component id="lblRecuperar" alignment="1" min="-2" pref="270" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
                                   </Group>
@@ -161,7 +161,7 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BtnIniciar" min="-2" pref="32" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="Recuperar_Contrasena" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblRecuperar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="194" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -268,11 +268,14 @@
             </Component>
             <Component class="javax.swing.JPasswordField" name="TxtContrase&#xf1;a">
             </Component>
-            <Component class="javax.swing.JLabel" name="Recuperar_Contrasena">
+            <Component class="javax.swing.JLabel" name="lblRecuperar">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="Recuperar contrase&#xf1;a"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblRecuperarMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
               <Properties>
