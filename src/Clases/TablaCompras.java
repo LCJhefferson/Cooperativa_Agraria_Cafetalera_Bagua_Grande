@@ -4,9 +4,12 @@
  */
 package Clases;
 
+import java.awt.Component;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -34,10 +37,18 @@ public class TablaCompras {
         
      DefaultTableModel v_tabla = new DefaultTableModel(
     new Object[][] {
-        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez",btnpdf,btnEliminar,btnModificar},
-        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez", btnpdf, btnEliminar, btnModificar},
+        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
+        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
+        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
+        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
+        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
+        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
+        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
+        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
+        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
+        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
     },
-    new Object[]{"PRODUCTO","CANTIDAD","PRECIO","COBASE","HUMEDAD","RENDIMIENTO","GUIA DE REMISION","SOCIO","PDF","ELIMINAR","MODIFICAR"}
+    new Object[]{"Producto","Cantidad","precio","Cobase","Humedad","Rendimiento","Guia de remision","Socio","Fecha","PDF","ELIMINAR","MODIFICAR"}
 ) {
     boolean editable = false; // bandera para saber si se puede editar
 
@@ -59,10 +70,30 @@ public class TablaCompras {
         //codigo par ahacer la trnasicion de botones de modificar a guardar 
         
         
-       
+       for (int column = 0; column < tablaCompras.getColumnCount(); column++) {
+    TableColumn tableColumn = tablaCompras.getColumnModel().getColumn(column);
+    int preferredWidth = 50; 
+    int maxWidth = 300;
+
+    for (int row = 0; row < tablaCompras.getRowCount(); row++) {
+        TableCellRenderer cellRenderer = tablaCompras.getCellRenderer(row, column);
+        Component c = tablaCompras.prepareRenderer(cellRenderer, row, column);
+        int width = c.getPreferredSize().width + 10;
+        preferredWidth = Math.max(preferredWidth, width);
+
+        if (preferredWidth >= maxWidth) {
+            preferredWidth = maxWidth;
+            break;
+        }
+    }
+    tableColumn.setPreferredWidth(preferredWidth);
+}
+
         
+      
         //hacemos las celdas mas grandes
         tablaCompras.setRowHeight(30);
+
     }       
   
 }

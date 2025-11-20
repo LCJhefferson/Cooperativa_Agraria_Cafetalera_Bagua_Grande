@@ -5,6 +5,7 @@
 package Interfaces_Almacenero;
 
 import Clases.TablaSalidas;
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
@@ -351,10 +352,10 @@ public class Salidas extends javax.swing.JInternalFrame {
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(cbxProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 21, Short.MAX_VALUE)
                         .addComponent(jLabel17)
                         .addGap(18, 18, 18)
-                        .addComponent(txtCantidad))
+                        .addComponent(txtCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel14)
@@ -367,11 +368,11 @@ public class Salidas extends javax.swing.JInternalFrame {
                             .addComponent(txtNumeroOrden))))
                 .addGap(20, 20, 20))
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(45, 45, 45)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -382,7 +383,7 @@ public class Salidas extends javax.swing.JInternalFrame {
                     .addComponent(jLabel17)
                     .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbxProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 30, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
                     .addComponent(txtNumeroOrden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -394,11 +395,11 @@ public class Salidas extends javax.swing.JInternalFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11))
-                .addGap(91, 91, 91)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(425, 425, 425))
+                .addGap(54, 54, 54)
+                .addComponent(jButton2)
+                .addGap(138, 138, 138)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(330, 330, 330))
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -484,6 +485,8 @@ public class Salidas extends javax.swing.JInternalFrame {
     String NumeroOrden = txtNumeroOrden.getText();
     String Destino = txtDestino.getText();
     String Observaciones = txtObservaciones.getText();
+    String Fecha = java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     // Validación básica
     if (producto.isEmpty()|| cantidad.isEmpty() || NumeroOrden.isEmpty() || Destino.isEmpty() ) {
         JOptionPane.showMessageDialog(null, "Por favor complete todos los campos obligatorios");
@@ -503,7 +506,7 @@ public class Salidas extends javax.swing.JInternalFrame {
     // Obtenemos el modelo de la tabla y añadimos la nueva fila
     DefaultTableModel modelo = (DefaultTableModel) tblSalidas.getModel();
     modelo.addRow(new Object[]{
-        producto, cantidad,NumeroOrden,Destino,Observaciones, btnpdf, btnEliminar, btnModificar
+        producto, cantidad,NumeroOrden,Destino,Observaciones,Fecha, btnpdf, btnEliminar, btnModificar
     });
 
     // Limpiamos los campos
@@ -511,6 +514,7 @@ public class Salidas extends javax.swing.JInternalFrame {
     txtNumeroOrden.setText("");
     txtDestino.setText("");
     txtObservaciones.setText("");
+
 
     JOptionPane.showMessageDialog(null, "Salida registrada correctamente");
 

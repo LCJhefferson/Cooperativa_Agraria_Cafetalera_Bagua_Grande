@@ -4,9 +4,12 @@
  */
 package Clases;
 
+import java.awt.Component;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -34,10 +37,10 @@ public class TablaSalidas {
         
      DefaultTableModel v_tablaSalidas = new DefaultTableModel(
     new Object[][] {
-        {"FTO","120","000023","planta de procesamiento","ninguna",btnpdf,btnEliminar,btnModificar},
-        {"FT", "85", "000024", "planta de procesamiento","muy humedo", btnpdf, btnEliminar, btnModificar},
+        {"FTO","120","000023","planta de procesamiento","ninguna","12-08-2025",btnpdf,btnEliminar,btnModificar},
+        {"FT", "85", "000024", "planta de procesamiento","muy humedo", "12-08-2025",btnpdf, btnEliminar, btnModificar},
     },
-    new Object[]{"PRODUCTO","CANTIDAD","PRECIO","NUMERO DE ORDEN","DESTINO","PDF","ELIMINAR","MODIFICAR"}
+    new Object[]{"Producto","Cantidad","Numero de orden","Destino","Observacions","Fecha","Pdf","Eliminar","Modificar"}
 ) {
     boolean editable = false; // bandera para saber si se puede editar
 
@@ -59,6 +62,28 @@ public class TablaSalidas {
         
         //hacemos las celdas mas grandes
         tablaSalidas.setRowHeight(30);
+        
+                
+        
+       for (int column = 0; column < tablaSalidas.getColumnCount(); column++) {
+    TableColumn tableColumn = tablaSalidas.getColumnModel().getColumn(column);
+    int preferredWidth = 50; 
+    int maxWidth = 300;
+
+    for (int row = 0; row < tablaSalidas.getRowCount(); row++) {
+        TableCellRenderer cellRenderer = tablaSalidas.getCellRenderer(row, column);
+        Component c = tablaSalidas.prepareRenderer(cellRenderer, row, column);
+        int width = c.getPreferredSize().width + 10;
+        preferredWidth = Math.max(preferredWidth, width);
+
+        if (preferredWidth >= maxWidth) {
+            preferredWidth = maxWidth;
+            break;
+        }
+    }
+    tableColumn.setPreferredWidth(preferredWidth);
+}
+
     }       
   
 }
