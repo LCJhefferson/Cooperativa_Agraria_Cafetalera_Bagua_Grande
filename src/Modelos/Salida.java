@@ -1,4 +1,4 @@
-package modelos;
+package Modelos;
 
 public class Salida {
     private int id;

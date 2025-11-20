@@ -1,7 +1,7 @@
-package dao;
+package DAO;
 
-import conexion.Conexion;
-import modelos.Usuario;
+import Conexion.Conexion;
+import Modelos.Usuario;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class UsuarioDAO {
             VALUES (?, ?, ?, ?, ?)
             """;
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql)) {
 
             pst.setString(1, u.getUsuario());
@@ -36,7 +36,7 @@ public class UsuarioDAO {
         List<Usuario> lista = new ArrayList<>();
         String sql = "SELECT * FROM usuarios ORDER BY creado_en DESC";
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql);
              ResultSet rs = pst.executeQuery()) {
 
@@ -57,5 +57,29 @@ public class UsuarioDAO {
         }
 
         return lista;
+    }
+    
+    
+    
+    public int validarLogin(String usuario, String contraseña) {
+        String sql = "SELECT id_rol FROM usuarios WHERE Usuario = ? AND contraseña = ?";
+        
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, usuario);
+            ps.setString(2, contraseña);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("id_rol");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error en validarLogin: " + e.getMessage());
+        }
+
+        return -1; // no existe
     }
 }

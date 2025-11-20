@@ -1,7 +1,7 @@
-package dao;
+package DAO;
 
-import conexion.Conexion;
-import modelos.Salida;
+import Conexion.Conexion;
+import Modelos.Salida;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class SalidaDAO {
             VALUES (?, ?, ?, ?, ?)
             """;
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql)) {
 
             pst.setInt(1, s.getIdUsuario());
@@ -36,7 +36,7 @@ public class SalidaDAO {
         List<Salida> lista = new ArrayList<>();
         String sql = "SELECT * FROM salida ORDER BY fecha_salida DESC";
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql);
              ResultSet rs = pst.executeQuery()) {
 

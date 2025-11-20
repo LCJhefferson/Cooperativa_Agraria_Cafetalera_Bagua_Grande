@@ -1,7 +1,7 @@
-package dao;
+package DAO;
 
-import conexion.Conexion;
-import modelos.PrecioDia;
+import Conexion.Conexion;
+import Modelos.PrecioDia;
 
 import java.sql.*;
 
@@ -13,7 +13,7 @@ public class PrecioDiaDAO {
             VALUES (?, ?)
             """;
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql)) {
 
             pst.setString(1, p.getFecha());
@@ -32,7 +32,7 @@ public class PrecioDiaDAO {
         PrecioDia p = null;
         String sql = "SELECT * FROM precio_dia WHERE fecha = CURDATE() LIMIT 1";
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql);
              ResultSet rs = pst.executeQuery()) {
 

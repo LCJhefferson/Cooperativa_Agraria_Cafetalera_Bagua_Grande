@@ -1,7 +1,7 @@
-package dao;
+package DAO;
 
-import conexion.Conexion;
-import modelos.Compra;
+import Conexion.Conexion;
+import Modelos.Compra;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class CompraDAO {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql)) {
 
             pst.setInt(1, c.getIdUsuario());
@@ -41,7 +41,7 @@ public class CompraDAO {
         List<Compra> lista = new ArrayList<>();
         String sql = "SELECT * FROM compra ORDER BY fecha_registro DESC";
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql);
              ResultSet rs = pst.executeQuery()) {
 

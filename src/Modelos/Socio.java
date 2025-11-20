@@ -2,19 +2,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package modelos;
+package Modelos;
 
 /**
  *
  * @author jheff
  */
-public class Usuario {
-        private int id;
-    private String usuario;
+public class Socio {
+    private int id;
+    private String nombre;
     private int idTipoDocumento;
     private String nroDocumento;
-    private String contraseña;
-    private int idRol;
+    private String cobase;
+    private String estado;
 
     // Getters y Setters
 
@@ -26,12 +26,12 @@ public class Usuario {
         this.id = id;
     }
 
-    public String getUsuario() {
-        return usuario;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public int getIdTipoDocumento() {
@@ -50,20 +50,20 @@ public class Usuario {
         this.nroDocumento = nroDocumento;
     }
 
-    public String getContraseña() {
-        return contraseña;
+    public String getCobase() {
+        return cobase;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setCobase(String cobase) {
+        this.cobase = cobase;
     }
 
-    public int getIdRol() {
-        return idRol;
+    public String getEstado() {
+        return estado;
     }
 
-    public void setIdRol(int idRol) {
-        this.idRol = idRol;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
     
 }

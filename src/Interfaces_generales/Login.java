@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package Interfaces_Almacenero;
+package Interfaces_generales;
 
+import DAO.UsuarioDAO;
+import Interfaces_Almacenero.Menu_Almacenero;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -12,7 +14,7 @@ import javax.swing.SwingUtilities;
  * @author jheff
  */
 public class Login extends javax.swing.JFrame {
-
+           
     /**
      * Creates new form Login
      */
@@ -211,32 +213,62 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnIniciarActionPerformed
-Menu_Almacenero menu_almacenero = new Menu_Almacenero();
 
-String usuario = TxtUsuario.getText().trim();
-String contrasena = new String(TxtContraseña.getPassword()).trim();
-String tipo = CbxTipoUsuario.getSelectedItem().toString();
+    String usuario = TxtUsuario.getText().trim();
+    String contrasena = new String(TxtContraseña.getPassword()).trim();
+    String tipoSeleccionado = CbxTipoUsuario.getSelectedItem().toString();
 
-// Credenciales definidas en el código
-String user = "usuario";
-String clave = "12345";
-String nivel1 = "Administrador";
-
-// Validaciones
-if (usuario.isEmpty() || contrasena.isEmpty()) {
-    TxtTexto.setText("Debe ingresar un usuario y contraseña");
-    TxtTexto.setForeground(Color.RED);
-} else {
-    if (usuario.equals(user) && contrasena.equals(clave) && tipo.equals(nivel1)) {
-        TxtTexto.setText(""); // Limpia el label si no hay error
-        JOptionPane.showMessageDialog(this, "Bienvenido " + usuario);
-        menu_almacenero.setVisible(true);
-        this.dispose(); // Cierra el login
-    } else {
-        TxtTexto.setText("Usuario, contraseña o rol incorrecto");
+    if (usuario.isEmpty() || contrasena.isEmpty()) {
+        TxtTexto.setText("Debe ingresar un usuario y contraseña");
         TxtTexto.setForeground(Color.RED);
+        return;
     }
-}
+
+    // Llamada al DAO real
+    UsuarioDAO dao = new UsuarioDAO();
+    int rol = dao.validarLogin(usuario, contrasena);
+
+    if (rol == -1) {
+        TxtTexto.setText("Usuario o contraseña incorrectos");
+        TxtTexto.setForeground(Color.RED);
+        return;
+    }
+
+    // Si llega aquí, el usuario existe
+    TxtTexto.setText("");
+    JOptionPane.showMessageDialog(this, "Bienvenido " + usuario);
+
+    // Validación de rol por BD
+    switch (rol) {
+
+        case 1: // Administrador
+            if (!tipoSeleccionado.equals("Administrador")) {
+                TxtTexto.setText("Seleccione el rol correcto");
+                TxtTexto.setForeground(Color.RED);
+                return;
+            }
+            Interfaces_Administrador.Menu_Administrador admin = new Interfaces_Administrador.Menu_Administrador();
+            admin.setVisible(true);
+            this.dispose();
+            break;
+
+        case 2: // Almacenero
+            if (!tipoSeleccionado.equals("Almacenero")) {
+                TxtTexto.setText("Seleccione el rol correcto");
+                TxtTexto.setForeground(Color.RED);
+                return;
+            }
+            Interfaces_Almacenero.Menu_Almacenero almacen = new Interfaces_Almacenero.Menu_Almacenero();
+            almacen.setVisible(true);
+            this.dispose();
+            break;
+
+        default:
+            TxtTexto.setText("Rol no reconocido");
+            TxtTexto.setForeground(Color.RED);
+            break;
+    }
+
 
 
     }//GEN-LAST:event_BtnIniciarActionPerformed

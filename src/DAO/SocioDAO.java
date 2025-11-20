@@ -1,7 +1,7 @@
-package dao;
+package DAO;
 
-import conexion.Conexion;
-import modelos.Socio;
+import Conexion.Conexion;
+import Modelos.Socio;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class SocioDAO {
             VALUES (?, ?, ?, ?, ?)
             """;
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql)) {
 
             pst.setString(1, s.getNombre());
@@ -37,7 +37,7 @@ public class SocioDAO {
         List<Socio> lista = new ArrayList<>();
         String sql = "SELECT * FROM socio ORDER BY nombre ASC";
 
-        try (Connection cn = Conexion.getConnection();
+        try (Connection cn = Conexion.getConexion();
              PreparedStatement pst = cn.prepareStatement(sql);
              ResultSet rs = pst.executeQuery()) {
 
