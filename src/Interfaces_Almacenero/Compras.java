@@ -7,6 +7,13 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import Clases.RenderTabla;
+import java.io.FileOutputStream;
 
 
 public class Compras extends javax.swing.JInternalFrame {
@@ -393,7 +400,7 @@ public static Compras getInstancia(){
 
             // === BOTÓN PDF ===
             if (nombre.equals("b_pdf")) {
-                System.out.println("Click en el botón PDF");
+                generarPDF_Fila(fila); // <-- Genera solo la fila
             }
 
             // === BOTÓN ELIMINAR ===
@@ -453,6 +460,47 @@ public static Compras getInstancia(){
     private void txtSocio1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSocio1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSocio1ActionPerformed
+    
+public void generarPDF_Fila(int fila) {
+    try {
+        String ruta = "C:/reportes/Compra_Fila_" + fila + ".pdf";
+
+        Document documento = new Document();
+        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+        documento.open();
+
+        // TÍTULO
+        documento.add(new Paragraph("REPORTE DE COMPRA (FILA " + fila + ")\n\n"));
+
+        PdfPTable tabla = new PdfPTable(tblCompras.getColumnCount());
+
+        // ENCABEZADOS
+        for (int c = 0; c < tblCompras.getColumnCount(); c++) {
+            tabla.addCell(tblCompras.getColumnName(c));
+        }
+
+        // DATOS DE LA FILA A EXPORTAR
+        for (int c = 0; c < tblCompras.getColumnCount(); c++) {
+            Object valor = tblCompras.getValueAt(fila, c);
+
+            // Si es botón, ponemos el texto del botón
+            if (valor instanceof JButton btn) {
+                tabla.addCell(btn.getText());
+            } else {
+                tabla.addCell(valor != null ? valor.toString() : "");
+            }
+        }
+
+        documento.add(tabla);
+        documento.close();
+
+        JOptionPane.showMessageDialog(null, "PDF generado correctamente");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error al generar el PDF: " + e.getMessage());
+    }
+}
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

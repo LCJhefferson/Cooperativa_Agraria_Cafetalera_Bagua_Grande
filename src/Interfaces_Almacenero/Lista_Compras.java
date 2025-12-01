@@ -5,7 +5,13 @@
 package Interfaces_Almacenero;
 
 import Clases.TablaCompras;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
 
@@ -106,6 +112,11 @@ public class Lista_Compras extends javax.swing.JInternalFrame {
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/pdf_2.png"))); // NOI18N
         jButton4.setText("Descargarr todo");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -141,9 +152,9 @@ public class Lista_Compras extends javax.swing.JInternalFrame {
                 .addGap(96, 96, 96)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtGuiaRemisionBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtGuiaRemisionBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -239,7 +250,7 @@ public class Lista_Compras extends javax.swing.JInternalFrame {
 
             // === BOTÓN PDF ===
             if (nombre.equals("b_pdf")) {
-                System.out.println("Click en el botón PDF");
+                generarPDF_Fila_ListaCompras(fila); // <-- Genera solo la fila
             }
 
             // === BOTÓN ELIMINAR ===
@@ -290,6 +301,95 @@ public class Lista_Compras extends javax.swing.JInternalFrame {
     }        // TODO add your handling code here:
     }//GEN-LAST:event_tblListaComprasMouseClicked
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        try {
+        String ruta = "C:/reportes/Reporte_Todas_Las_Compras.pdf";
+
+        Document documento = new Document();
+        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+        documento.open();
+
+        documento.add(new Paragraph("REPORTE COMPLETO DE COMPRAS\n\n"));
+
+        int columnas = tblListaCompras.getColumnCount();
+        PdfPTable tablaPDF = new PdfPTable(columnas);
+
+        // ENCABEZADOS
+        for (int c = 0; c < columnas; c++) {
+            tablaPDF.addCell(tblListaCompras.getColumnName(c));
+        }
+
+        int filas = tblListaCompras.getRowCount();
+
+        // RECORRER TODAS LAS FILAS
+        for (int f = 0; f < filas; f++) {
+            for (int c = 0; c < columnas; c++) {
+
+                Object dato = tblListaCompras.getValueAt(f, c);
+
+                // Si la celda tiene un botón, solo colocamos texto
+                if (dato instanceof JButton) {
+                    JButton b = (JButton) dato;
+                    tablaPDF.addCell(b.getText());
+                } else {
+                    tablaPDF.addCell(dato != null ? dato.toString() : "");
+                }
+            }
+        }
+
+        documento.add(tablaPDF);
+        documento.close();
+
+        JOptionPane.showMessageDialog(this, 
+            "PDF generado correctamente en:\n" + ruta);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, 
+            "Error al generar PDF: " + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton4ActionPerformed
+public void generarPDF_Fila_ListaCompras(int fila) {
+    try {
+
+        String ruta = "C:/reportes/Lista_Compra_Fila_" + fila + ".pdf";
+
+        Document documento = new Document();
+        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+        documento.open();
+
+        documento.add(new Paragraph("REPORTE DE COMPRA (LISTA)\n\n"));
+        documento.add(new Paragraph("Datos de la fila seleccionada:\n\n"));
+
+        PdfPTable tablaPDF = new PdfPTable(tblListaCompras.getColumnCount());
+
+        // ENCABEZADOS
+        for (int c = 0; c < tblListaCompras.getColumnCount(); c++) {
+            tablaPDF.addCell(tblListaCompras.getColumnName(c));
+        }
+
+        // DATOS DE LA FILA
+        for (int c = 0; c < tblListaCompras.getColumnCount(); c++) {
+
+            Object valor = tblListaCompras.getValueAt(fila, c);
+
+            if (valor instanceof JButton) {
+                valor = ((JButton) valor).getText();  
+            }
+
+            tablaPDF.addCell(valor == null ? "" : valor.toString());
+        }
+
+        documento.add(tablaPDF);
+        documento.close();
+
+        JOptionPane.showMessageDialog(null, "PDF generado correctamente:\n" + ruta);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Error al generar PDF: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
