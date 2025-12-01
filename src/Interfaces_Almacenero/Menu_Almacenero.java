@@ -4,6 +4,8 @@
  */
 package Interfaces_Almacenero;
 
+import java.security.Timestamp;
+import java.time.LocalDateTime;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -55,6 +57,7 @@ public class Menu_Almacenero extends javax.swing.JFrame {
         jButton11 = new javax.swing.JButton();
         ListaVentas = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
+        btnPrecio_dia = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         LBLUbicacion = new javax.swing.JLabel();
         LBLTitulo = new javax.swing.JLabel();
@@ -256,20 +259,33 @@ public class Menu_Almacenero extends javax.swing.JFrame {
             }
         });
 
+        btnPrecio_dia.setBackground(new java.awt.Color(51, 102, 0));
+        btnPrecio_dia.setForeground(new java.awt.Color(255, 255, 255));
+        btnPrecio_dia.setText("Precio del cafe  hoy ");
+        btnPrecio_dia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrecio_diaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(46, 46, 46)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
             .addComponent(JBT_RegistrarCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(BTNSalidas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(ListaCompras, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(ListaVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(46, 46, 46)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(45, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnPrecio_dia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -288,7 +304,9 @@ public class Menu_Almacenero extends javax.swing.JFrame {
                 .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(257, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 219, Short.MAX_VALUE)
+                .addComponent(btnPrecio_dia)
+                .addGap(15, 15, 15))
         );
 
         jPanel4.setBackground(new java.awt.Color(153, 204, 0));
@@ -418,6 +436,19 @@ actualizarNavegacion("Lista de salidad", "Lista de salidad");
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton12ActionPerformed
 
+    private void btnPrecio_diaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrecio_diaActionPerformed
+    Precio_cafe_hoy jif = Precio_cafe_hoy.getInstancia();
+    if( jif.isVisible()){
+        jif.toFront();
+    }else{
+       Principal.add(jif);
+        jif.setVisible(true);
+    }
+    
+        
+        actualizarNavegacion("Precio del Cafe ", "Precio del Cafe hoy" );
+    }//GEN-LAST:event_btnPrecio_diaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -466,6 +497,7 @@ actualizarNavegacion("Lista de salidad", "Lista de salidad");
     private javax.swing.JButton ListaVentas;
     private javax.swing.JPanel MenuPrincipal;
     private javax.swing.JDesktopPane Principal;
+    private javax.swing.JButton btnPrecio_dia;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;

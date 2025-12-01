@@ -20,7 +20,7 @@ public class Login extends javax.swing.JFrame {
      */
     public Login() {
         initComponents();
-        setLocationRelativeTo(null); // ocentra la ventana
+        setLocationRelativeTo(null); // centra la ventana
     }
 
     /**
@@ -287,7 +287,8 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_CbxTipoUsuarioActionPerformed
 
     private void lblRecuperarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRecuperarMouseClicked
-  new Interfaces_generales.ValidarRecuperacion().setVisible(true);
+  Interfaces_generales.ValidarRecuperacion vr = new  Interfaces_generales.ValidarRecuperacion();
+  vr.setVisible(true);
     this.dispose();
     }//GEN-LAST:event_lblRecuperarMouseClicked
 

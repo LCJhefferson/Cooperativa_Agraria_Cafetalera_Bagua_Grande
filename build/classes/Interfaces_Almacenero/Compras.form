@@ -76,35 +76,35 @@
                           <Component id="jLabel2" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel9" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="1" min="-2" pref="71" max="-2" attributes="0"/>
+                          <Component id="jLabel8" alignment="1" min="-2" pref="71" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="btnAgregar" min="-2" pref="219" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="txtGuia" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="txtHumedad" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="cbxProducto" alignment="0" pref="80" max="32767" attributes="0"/>
-                                      <Component id="txtRendimiento" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                                          <Component id="jLabel7" min="-2" pref="45" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="jLabel4" alignment="1" min="-2" pref="58" max="-2" attributes="0"/>
-                                      <Component id="jLabel6" alignment="1" min="-2" pref="49" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="txtCantidad" max="32767" attributes="0"/>
-                                      <Component id="txtCobase" max="32767" attributes="0"/>
-                                      <Component id="txtPrecio" min="-2" pref="80" max="-2" attributes="0"/>
-                                  </Group>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="txtGuia" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="txtHumedad" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="cbxProducto" alignment="0" pref="80" max="32767" attributes="0"/>
+                                  <Component id="txtRendimiento" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="txtSocio" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                      <Component id="jLabel7" min="-2" pref="45" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="jLabel4" alignment="1" min="-2" pref="58" max="-2" attributes="0"/>
+                                  <Component id="jLabel6" alignment="1" min="-2" pref="49" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="txtCantidad" max="32767" attributes="0"/>
+                                  <Component id="txtCobase" max="32767" attributes="0"/>
+                                  <Component id="txtPrecio" min="-2" pref="80" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
+                          <Component id="txtSocio" max="32767" attributes="0"/>
+                          <Component id="txtSocio1" max="32767" attributes="0"/>
+                          <Component id="btnAgregar" min="-2" pref="219" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="25" max="32767" attributes="0"/>
                   </Group>
@@ -170,7 +170,12 @@
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="txtSocio" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="txtSocio1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
                       <Component id="btnAgregar" min="-2" pref="33" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -193,7 +198,7 @@
             <Component class="javax.swing.JLabel" name="jLabel3">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" value="Socio"/>
+                <Property name="text" type="java.lang.String" value="DNI Socio"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel4">
@@ -223,7 +228,7 @@
             <Component class="javax.swing.JLabel" name="jLabel9">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" value="Guia de remision"/>
+                <Property name="text" type="java.lang.String" value="Guia de ingreso"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtPrecio">
@@ -273,6 +278,20 @@
               </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="txtSocio">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtSocioActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel8">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="4"/>
+                <Property name="text" type="java.lang.String" value="Socio"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="txtSocio1">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtSocio1ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -286,7 +305,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="908" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="915" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">

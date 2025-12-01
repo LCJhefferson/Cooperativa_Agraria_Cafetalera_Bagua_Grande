@@ -51,7 +51,7 @@ public class Usuario {
     }
     public void setContrasena(String contrasena) { 
         this.contrasena = contrasena;
-    }
+    }   
     public void setRol(Rol rol) { 
         this.rol = rol; 
     }
