@@ -4,7 +4,9 @@
  */
 package Interfaces_Almacenero;
 
+import Clases.PDF_tabla;
 import Clases.TablaCompras;
+import Clases.BotonesTablas;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -251,143 +253,13 @@ public class Lista_Compras extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void tblListaComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblListaComprasMouseClicked
- int fila = tblListaCompras.rowAtPoint(evt.getPoint());
-    int columna = tblListaCompras.columnAtPoint(evt.getPoint());
-
-    if (fila >= 0 && columna >= 0) {
-        Object value = tblListaCompras.getValueAt(fila, columna);
-
-        if (value instanceof JButton) {
-            JButton boton = (JButton) value;
-            String nombre = boton.getName();
-
-            // === BOTÓN PDF ===
-            if (nombre.equals("b_pdf")) {
-                generarPDF_Fila_ListaCompras(fila); // <-- Genera solo la fila
-            }
-
-            // === BOTÓN ELIMINAR ===
-            if (nombre.equals("b_eliminar")) {
-                System.out.println("Click en el botón Eliminar");
-                ((DefaultTableModel) tblListaCompras.getModel()).removeRow(fila);
-            }
-
-        // === BOTÓN MODIFICAR ===
-            if (nombre.equals("b_modificar")) {
-                System.out.println("Click en el botón Modificar");
-
-                // Si hay otra fila en edición, la restauramos
-                if (filaEnEdicion != -1 && filaEnEdicion != fila) {
-                    JButton btnModificarAntiguo = new JButton("Modificar");
-                    btnModificarAntiguo.setName("b_modificar");
-                    tblListaCompras.setValueAt(btnModificarAntiguo, filaEnEdicion, columna);
-                }
-
-                // Activamos el modo Guardar solo para la fila actual
-                JButton btnGuardar = new JButton("Guardar");
-                btnGuardar.setName("b_guardar");
-                tblListaCompras.setValueAt(btnGuardar, fila, columna);
-                tblListaCompras.repaint();
-
-                filaEnEdicion = fila; // guardamos la fila que se está editando
-            }
-
-            // === BOTÓN GUARDAR ===
-            if (nombre.equals("b_guardar")) {
-                System.out.println("Click en el botón Guardar");
-
-                String producto = tblListaCompras.getValueAt(fila, 0).toString();
-                String cantidad = tblListaCompras.getValueAt(fila, 1).toString();
-                String precio = tblListaCompras.getValueAt(fila, 2).toString();
-
-                System.out.println("Guardando cambios");
-
-                // Restauramos el botón a "Modificar"
-                JButton btnModificar = new JButton("Modificar");
-                btnModificar.setName("b_modificar");
-                tblListaCompras.setValueAt(btnModificar, fila, columna);
-                tblListaCompras.repaint();
-
-                filaEnEdicion = -1; // limpiamos la fila activa
-            }
-        }
-    }        // TODO add your handling code here:
+BotonesTablas handler = new BotonesTablas();
+    handler.manejarEventoTabla(tblListaCompras, evt);
     }//GEN-LAST:event_tblListaComprasMouseClicked
 
     private void btnDescargarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarTodoActionPerformed
-try {
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setDialogTitle("Guardar reporte de compras");
-    FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
-    fileChooser.setFileFilter(filtro);
-
-    int seleccion = fileChooser.showSaveDialog(this);
-
-    if (seleccion == JFileChooser.APPROVE_OPTION) {
-        File archivoSeleccionado = fileChooser.getSelectedFile();
-        String ruta = archivoSeleccionado.getAbsolutePath();
-        if (!ruta.toLowerCase().endsWith(".pdf")) {
-            ruta += ".pdf";
-        }
-
-        Document documento = new Document();
-        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
-        documento.open();
-
-        com.itextpdf.text.Font fuentePequena = FontFactory.getFont(FontFactory.HELVETICA, 8);
-        com.itextpdf.text.Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
-
-        documento.add(new Paragraph("REPORTE COMPLETO DE COMPRAS\n\n", fuenteEncabezado));
-        documento.add(new Paragraph("Generado el: " + 
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\n\n", fuentePequena));
-
-        // --- LÓGICA DE TABLA ---
-        int columnas = tblListaCompras.getColumnCount();
-        List<Integer> columnasValidas = new ArrayList<>();
-        for (int c = 0; c < columnas; c++) {
-            String nombre = tblListaCompras.getColumnName(c);
-            if (!nombre.equalsIgnoreCase("PDF") &&
-                !nombre.equalsIgnoreCase("ELIMINAR") &&
-                !nombre.equalsIgnoreCase("MODIFICAR")) {
-                columnasValidas.add(c);
-            }
-        }
-
-        PdfPTable tablaPDF = new PdfPTable(columnasValidas.size());
-        tablaPDF.setWidthPercentage(100);
-        tablaPDF.setSpacingBefore(10f);
-        tablaPDF.setSpacingAfter(10f);
-
-        // Encabezados
-        for (int c : columnasValidas) {
-            PdfPCell encabezado = new PdfPCell(new Phrase(tblListaCompras.getColumnName(c), fuenteEncabezado));
-            encabezado.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            encabezado.setHorizontalAlignment(Element.ALIGN_CENTER);
-            tablaPDF.addCell(encabezado);
-        }
-
-        // Todas las filas
-        int filas = tblListaCompras.getRowCount();
-        for (int f = 0; f < filas; f++) {
-            for (int c : columnasValidas) {
-                Object valor = tblListaCompras.getValueAt(f, c);
-                String texto = (valor instanceof JButton) ? ((JButton) valor).getText() : (valor != null ? valor.toString() : "");
-                PdfPCell celda = new PdfPCell(new Phrase(texto, fuentePequena));
-                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                tablaPDF.addCell(celda);
-            }
-        }
-
-        documento.add(tablaPDF);
-        documento.close();
-
-        JOptionPane.showMessageDialog(this, "PDF generado correctamente en:\n" + ruta);
-    }
-
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(this, "Error al generar PDF: " + e.getMessage());
-    e.printStackTrace();
-}
+  PDF_tabla pdf = new PDF_tabla();
+    pdf.generarPDF_TablaCompleta(tblListaCompras, "compras");
 
     }//GEN-LAST:event_btnDescargarTodoActionPerformed
 
@@ -410,115 +282,6 @@ try {
     private javax.swing.JTextField txtGuiaRemisionBuscar;
     private javax.swing.JTextField txtSocioBuscar;
     // End of variables declaration//GEN-END:variables
-
-
-
-    
-    
-    public void generarPDF_Fila_ListaCompras(int fila) {
-    Document documento = new Document();
-    try {
-        if (fila < 0 || fila >= tblListaCompras.getRowCount()) {
-            JOptionPane.showMessageDialog(null, "La fila seleccionada no es válida.");
-            return;
-        }
-
-        // Cuadro de diálogo para elegir ruta
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Guardar reporte de compra");
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
-        fileChooser.setFileFilter(filtro);
-
-        int seleccion = fileChooser.showSaveDialog(null);
-        if (seleccion != JFileChooser.APPROVE_OPTION) {
-            return; // Cancelado
-        }
-
-        File archivoSeleccionado = fileChooser.getSelectedFile();
-        String ruta = archivoSeleccionado.getAbsolutePath();
-        if (!ruta.toLowerCase().endsWith(".pdf")) {
-            ruta += ".pdf";
-        }
-
-        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
-        documento.open();
-
-        // Fuentes
-        com.itextpdf.text.Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.BLACK);
-        com.itextpdf.text.Font fuenteSubtitulo = FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.LIGHT_GRAY);
-        com.itextpdf.text.Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9);
-        com.itextpdf.text.Font fuentePequena = FontFactory.getFont(FontFactory.HELVETICA, 8);
-
-        String fechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
-        // Título
-        Paragraph titulo = new Paragraph("REPORTE DE COMPRA (LISTA)\n", fuenteTitulo);
-        titulo.setAlignment(Element.ALIGN_CENTER);
-        documento.add(titulo);
-
-        // Subtítulo
-        Paragraph subtitulo = new Paragraph("Generado el: " + fechaHora + "\n\n", fuenteSubtitulo);
-        subtitulo.setAlignment(Element.ALIGN_RIGHT);
-        documento.add(subtitulo);
-
-        documento.add(new Paragraph("Datos de la fila seleccionada:\n\n", fuentePequena));
-
-        // Columnas válidas
-        int columnas = tblListaCompras.getColumnCount();
-        List<Integer> columnasValidas = new ArrayList<>();
-        for (int c = 0; c < columnas; c++) {
-            String nombre = tblListaCompras.getColumnName(c);
-            if (!nombre.equalsIgnoreCase("PDF") &&
-                !nombre.equalsIgnoreCase("ELIMINAR") &&
-                !nombre.equalsIgnoreCase("MODIFICAR")) {
-                columnasValidas.add(c);
-            }
-        }
-
-        // Tabla PDF
-        PdfPTable tablaPDF = new PdfPTable(columnasValidas.size());
-        tablaPDF.setWidthPercentage(100);
-        tablaPDF.setSpacingBefore(15f);
-        tablaPDF.setSpacingAfter(15f);
-
-        // Encabezados
-        for (int c : columnasValidas) {
-            PdfPCell encabezado = new PdfPCell(new Phrase(tblListaCompras.getColumnName(c), fuenteEncabezado));
-            encabezado.setBackgroundColor(new BaseColor(102,153,0)); ///////////////////////////color 
-            encabezado.setHorizontalAlignment(Element.ALIGN_CENTER);
-            encabezado.setBorderWidth(1f);
-            tablaPDF.addCell(encabezado);
-        }
-
-        // Datos de la fila
-        for (int c : columnasValidas) {
-            Object valor = tblListaCompras.getValueAt(fila, c);
-            String texto = (valor instanceof JButton) ? ((JButton) valor).getText() : (valor != null ? valor.toString() : "");
-            PdfPCell celda = new PdfPCell(new Phrase(texto, fuentePequena));
-            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-            celda.setBorderWidth(0.5f);
-            tablaPDF.addCell(celda);
-        }
-
-        documento.add(tablaPDF);
-
-        // Pie de página
-        Paragraph pie = new Paragraph("Cooperativa Agraria Cafetalera Bagua Grande", 
-            FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, BaseColor.GRAY));
-        pie.setAlignment(Element.ALIGN_CENTER);
-        documento.add(pie);
-
-        JOptionPane.showMessageDialog(null, "PDF generado correctamente:\n" + ruta);
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Error al generar PDF: " + e.getMessage());
-        e.printStackTrace();
-    } finally {
-        if (documento.isOpen()) {
-            documento.close();
-        }
-    }
-}
 
 
 

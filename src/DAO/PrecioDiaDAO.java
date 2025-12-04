@@ -49,4 +49,75 @@ public class PrecioDiaDAO {
 
         return p;
     }
+    
+    
+    public boolean registrarPrecioDia(double precio) {
+    String sql = "INSERT INTO precio_dia (fecha, precio_base, created_at) VALUES (CURDATE(), ?, NOW())";
+    try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setDouble(1, precio);
+        ps.executeUpdate();
+        return true;
+
+    } catch (SQLException e) {
+        System.out.println("Error al registrar precio del día: " + e.getMessage());
+        return false;
+    }
+}
+
+    
+    
+    public boolean yaRegistradoHoy() {
+    String sql = "SELECT COUNT(*) FROM precio_dia WHERE fecha = CURDATE()";
+    try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        rs.next();
+        return rs.getInt(1) > 0;
+
+    } catch (SQLException e) {
+        return false;
+    }
+}
+
+    
+    
+    
+    public boolean guardarOActualizarPrecio(double precio) {
+    if (yaRegistradoHoy()) {
+        String sql = "UPDATE precio_dia SET precio_base = ? WHERE fecha = CURDATE()";
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setDouble(1, precio);
+            ps.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar precio del día: " + e.getMessage());
+            return false;
+        }
+    } else {
+        return registrarPrecioDia(precio);
+    }
+}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
