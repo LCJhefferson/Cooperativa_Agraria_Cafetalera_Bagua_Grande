@@ -13,7 +13,19 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import Clases.RenderTabla;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class Compras extends javax.swing.JInternalFrame {
@@ -400,7 +412,8 @@ public static Compras getInstancia(){
 
             // === BOTÓN PDF ===
             if (nombre.equals("b_pdf")) {
-                generarPDF_Fila(fila); // <-- Genera solo la fila
+                
+                 generarPDF_Fila_Compras(fila); // <-- Genera solo la fila
             }
 
             // === BOTÓN ELIMINAR ===
@@ -529,4 +542,121 @@ public void generarPDF_Fila(int fila) {
     private javax.swing.JTextField txtSocio;
     private javax.swing.JTextField txtSocio1;
     // End of variables declaration//GEN-END:variables
+
+    
+    
+    
+public void generarPDF_Fila_Compras(int fila) {
+    Document documento = new Document();
+    try {
+        if (fila < 0 || fila >= tblCompras.getRowCount()) {
+            JOptionPane.showMessageDialog(null, "La fila seleccionada no es válida.");
+            return;
+        }
+
+        // Cuadro de diálogo para elegir ruta
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar reporte de compras");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
+        fileChooser.setFileFilter(filtro);
+
+        int seleccion = fileChooser.showSaveDialog(null);
+        if (seleccion != JFileChooser.APPROVE_OPTION) {
+            return; // Cancelado
+        }
+
+        File archivoSeleccionado = fileChooser.getSelectedFile();
+        String ruta = archivoSeleccionado.getAbsolutePath();
+        if (!ruta.toLowerCase().endsWith(".pdf")) {
+            ruta += ".pdf";
+        }
+
+        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+        documento.open();
+
+        // Fuentes
+        com.itextpdf.text.Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.BLACK);
+        com.itextpdf.text.Font fuenteSubtitulo = FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.LIGHT_GRAY);
+        com.itextpdf.text.Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9);
+        com.itextpdf.text.Font fuentePequena = FontFactory.getFont(FontFactory.HELVETICA, 8);
+
+        String fechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+        // Título
+        Paragraph titulo = new Paragraph("REPORTE DE COMPRA (LISTA)\n", fuenteTitulo);
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        documento.add(titulo);
+
+        // Subtítulo
+        Paragraph subtitulo = new Paragraph("Generado el: " + fechaHora + "\n\n", fuenteSubtitulo);
+        subtitulo.setAlignment(Element.ALIGN_RIGHT);
+        documento.add(subtitulo);
+
+        documento.add(new Paragraph("Datos de la fila seleccionada:\n\n", fuentePequena));
+
+        // Columnas válidas
+        int columnas = tblCompras.getColumnCount();
+        List<Integer> columnasValidas = new ArrayList<>();
+        for (int c = 0; c < columnas; c++) {
+            String nombre = tblCompras.getColumnName(c);
+            if (!nombre.equalsIgnoreCase("PDF") &&
+                !nombre.equalsIgnoreCase("ELIMINAR") &&
+                !nombre.equalsIgnoreCase("MODIFICAR")) {
+                columnasValidas.add(c);
+            }
+        }
+
+        // Tabla PDF
+        PdfPTable tablaPDF = new PdfPTable(columnasValidas.size());
+        tablaPDF.setWidthPercentage(100);
+        tablaPDF.setSpacingBefore(15f);
+        tablaPDF.setSpacingAfter(15f);
+
+        // Encabezados
+        for (int c : columnasValidas) {
+            PdfPCell encabezado = new PdfPCell(new Phrase(tblCompras.getColumnName(c), fuenteEncabezado));
+            encabezado.setBackgroundColor(new BaseColor(102,153,0)); // Verde institucional
+            encabezado.setHorizontalAlignment(Element.ALIGN_CENTER);
+            encabezado.setBorderWidth(1f);
+            tablaPDF.addCell(encabezado);
+        }
+
+        // Datos de la fila
+        for (int c : columnasValidas) {
+            Object valor = tblCompras.getValueAt(fila, c);
+            String texto = (valor instanceof JButton) ? ((JButton) valor).getText() : (valor != null ? valor.toString() : "");
+            PdfPCell celda = new PdfPCell(new Phrase(texto, fuentePequena));
+            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+            celda.setBorderWidth(0.5f);
+            tablaPDF.addCell(celda);
+        }
+
+        documento.add(tablaPDF);
+
+        // Pie de página
+        Paragraph pie = new Paragraph("Cooperativa Agraria Cafetalera Bagua Grande", 
+            FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, BaseColor.GRAY));
+        pie.setAlignment(Element.ALIGN_CENTER);
+        documento.add(pie);
+
+        JOptionPane.showMessageDialog(null, "PDF generado correctamente:\n" + ruta);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Error al generar PDF: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        if (documento.isOpen()) {
+            documento.close();
+        }
+    }
+}
+    
+    
+    
+    
+    
+    
+    
+    
+
 }

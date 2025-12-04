@@ -5,8 +5,24 @@
 package Interfaces_Almacenero;
 
 import Clases.TablaSalidas;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
 
@@ -97,7 +113,6 @@ public class Salidas extends javax.swing.JInternalFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
         txtDestino = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
@@ -335,9 +350,6 @@ public class Salidas extends javax.swing.JInternalFrame {
         jLabel17.setText("cantidad");
         jLabel17.setToolTipText("");
 
-        jButton3.setBackground(new java.awt.Color(102, 102, 102));
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/pdf_2.png"))); // NOI18N
-
         jLabel12.setText("Numero de orden ");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -369,9 +381,7 @@ public class Salidas extends javax.swing.JInternalFrame {
                 .addGap(20, 20, 20))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(45, 45, 45)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -397,9 +407,7 @@ public class Salidas extends javax.swing.JInternalFrame {
                     .addComponent(jLabel11))
                 .addGap(54, 54, 54)
                 .addComponent(jButton2)
-                .addGap(138, 138, 138)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(330, 330, 330))
+                .addGap(500, 500, 500))
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -540,7 +548,8 @@ public class Salidas extends javax.swing.JInternalFrame {
 
             // === BOTÓN PDF ===
             if (nombre.equals("b_pdf")) {
-                System.out.println("Click en el botón PDF");
+               
+                 generarPDF_Fila_Salidas(fila); // <-- Genera solo la fila
             }
 
             // === BOTÓN ELIMINAR ===
@@ -596,7 +605,6 @@ public class Salidas extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<String> cbxProducto;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JLabel jLabel1;
@@ -633,4 +641,110 @@ public class Salidas extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtNumeroOrden;
     private javax.swing.JTextField txtObservaciones;
     // End of variables declaration//GEN-END:variables
+
+
+public void generarPDF_Fila_Salidas(int fila) {
+    Document documento = new Document();
+    try {
+        if (fila < 0 || fila >= tblSalidas.getRowCount()) {
+            JOptionPane.showMessageDialog(null, "La fila seleccionada no es válida.");
+            return;
+        }
+
+        // Cuadro de diálogo para elegir ruta
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar reporte de salida");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
+        fileChooser.setFileFilter(filtro);
+
+        int seleccion = fileChooser.showSaveDialog(null);
+        if (seleccion != JFileChooser.APPROVE_OPTION) {
+            return; // Cancelado
+        }
+
+        File archivoSeleccionado = fileChooser.getSelectedFile();
+        String ruta = archivoSeleccionado.getAbsolutePath();
+        if (!ruta.toLowerCase().endsWith(".pdf")) {
+            ruta += ".pdf";
+        }
+
+        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+        documento.open();
+
+        // Fuentes
+        com.itextpdf.text.Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.BLACK);
+        com.itextpdf.text.Font fuenteSubtitulo = FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.LIGHT_GRAY);
+        com.itextpdf.text.Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9);
+        com.itextpdf.text.Font fuentePequena = FontFactory.getFont(FontFactory.HELVETICA, 8);
+
+        String fechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+        // Título
+        Paragraph titulo = new Paragraph("REPORTE DE SALIDA (LISTA)\n", fuenteTitulo);
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        documento.add(titulo);
+
+        // Subtítulo
+        Paragraph subtitulo = new Paragraph("Generado el: " + fechaHora + "\n\n", fuenteSubtitulo);
+        subtitulo.setAlignment(Element.ALIGN_RIGHT);
+        documento.add(subtitulo);
+
+        documento.add(new Paragraph("Datos de la fila seleccionada:\n\n", fuentePequena));
+
+        // Columnas válidas
+        int columnas = tblSalidas.getColumnCount();
+        List<Integer> columnasValidas = new ArrayList<>();
+        for (int c = 0; c < columnas; c++) {
+            String nombre = tblSalidas.getColumnName(c);
+            if (!nombre.equalsIgnoreCase("PDF") &&
+                !nombre.equalsIgnoreCase("ELIMINAR") &&
+                !nombre.equalsIgnoreCase("MODIFICAR")) {
+                columnasValidas.add(c);
+            }
+        }
+
+        // Tabla PDF
+        PdfPTable tablaPDF = new PdfPTable(columnasValidas.size());
+        tablaPDF.setWidthPercentage(100);
+        tablaPDF.setSpacingBefore(15f);
+        tablaPDF.setSpacingAfter(15f);
+
+        // Encabezados
+        for (int c : columnasValidas) {
+            PdfPCell encabezado = new PdfPCell(new Phrase(tblSalidas.getColumnName(c), fuenteEncabezado));
+            encabezado.setBackgroundColor(new BaseColor(102,153,0)); // Verde institucional
+            encabezado.setHorizontalAlignment(Element.ALIGN_CENTER);
+            encabezado.setBorderWidth(1f);
+            tablaPDF.addCell(encabezado);
+        }
+
+        // Datos de la fila
+        for (int c : columnasValidas) {
+            Object valor = tblSalidas.getValueAt(fila, c);
+            String texto = (valor instanceof JButton) ? ((JButton) valor).getText() : (valor != null ? valor.toString() : "");
+            PdfPCell celda = new PdfPCell(new Phrase(texto, fuentePequena));
+            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+            celda.setBorderWidth(0.5f);
+            tablaPDF.addCell(celda);
+        }
+
+        documento.add(tablaPDF);
+
+        // Pie de página
+        Paragraph pie = new Paragraph("Cooperativa Agraria Cafetalera Bagua Grande", 
+            FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, BaseColor.GRAY));
+        pie.setAlignment(Element.ALIGN_CENTER);
+        documento.add(pie);
+
+        JOptionPane.showMessageDialog(null, "PDF generado correctamente:\n" + ruta);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Error al generar PDF: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        if (documento.isOpen()) {
+            documento.close();
+        }
+    }
+}
 }
