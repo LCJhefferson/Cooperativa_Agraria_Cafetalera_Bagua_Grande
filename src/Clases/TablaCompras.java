@@ -37,7 +37,7 @@ public class TablaCompras {
         
      DefaultTableModel v_tabla = new DefaultTableModel(
     new Object[][] {
-        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
+        {"CA","120","150","95","45","57","AK125JK12","Juan Lopez ","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
         {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
         {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
         {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},

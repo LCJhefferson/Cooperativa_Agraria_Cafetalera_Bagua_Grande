@@ -5,7 +5,26 @@
 package Interfaces_Almacenero;
 
 import Clases.TablaSalidas;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.awt.Font;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
 
@@ -67,7 +86,7 @@ public class Lista_Ventas extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         txtGuiaRemisionBuscar1 = new javax.swing.JTextField();
-        jButton6 = new javax.swing.JButton();
+        btnDescargarTodo = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -113,11 +132,11 @@ public class Lista_Ventas extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/pdf_2.png"))); // NOI18N
-        jButton6.setText("Descargar todo");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnDescargarTodo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/pdf_2.png"))); // NOI18N
+        btnDescargarTodo.setText("Descargar todo");
+        btnDescargarTodo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnDescargarTodoActionPerformed(evt);
             }
         });
 
@@ -138,7 +157,7 @@ public class Lista_Ventas extends javax.swing.JInternalFrame {
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(61, 61, 61)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnDescargarTodo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(75, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -147,11 +166,11 @@ public class Lista_Ventas extends javax.swing.JInternalFrame {
                 .addGap(96, 96, 96)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtGuiaRemisionBuscar1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtGuiaRemisionBuscar1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(269, 269, 269)
-                .addComponent(jButton6)
+                .addComponent(btnDescargarTodo)
                 .addContainerGap(265, Short.MAX_VALUE))
         );
 
@@ -189,9 +208,81 @@ public class Lista_Ventas extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
+    private void btnDescargarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarTodoActionPerformed
+     try {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Guardar reporte de salidas");
+    FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
+    fileChooser.setFileFilter(filtro);
+
+    int seleccion = fileChooser.showSaveDialog(this);
+
+    if (seleccion == JFileChooser.APPROVE_OPTION) {
+        File archivoSeleccionado = fileChooser.getSelectedFile();
+        String ruta = archivoSeleccionado.getAbsolutePath();
+        if (!ruta.toLowerCase().endsWith(".pdf")) {
+            ruta += ".pdf";
+        }
+
+        Document documento = new Document();
+        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+        documento.open();
+
+        com.itextpdf.text.Font fuentePequena = FontFactory.getFont(FontFactory.HELVETICA, 8);
+        com.itextpdf.text.Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+
+        documento.add(new Paragraph("REPORTE COMPLETO DE SALIDAS\n\n", fuenteEncabezado));
+        documento.add(new Paragraph("Generado el: " + 
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\n\n", fuentePequena));
+
+        // --- LÓGICA DE TABLA ---
+        int columnas = tblListaSalidas.getColumnCount();
+        List<Integer> columnasValidas = new ArrayList<>();
+        for (int c = 0; c < columnas; c++) {
+            String nombre = tblListaSalidas.getColumnName(c);
+            if (!nombre.equalsIgnoreCase("PDF") &&
+                !nombre.equalsIgnoreCase("ELIMINAR") &&
+                !nombre.equalsIgnoreCase("MODIFICAR")) {
+                columnasValidas.add(c);
+            }
+        }
+
+        PdfPTable tablaPDF = new PdfPTable(columnasValidas.size());
+        tablaPDF.setWidthPercentage(100);
+        tablaPDF.setSpacingBefore(10f);
+        tablaPDF.setSpacingAfter(10f);
+
+        // Encabezados
+        for (int c : columnasValidas) {
+            PdfPCell encabezado = new PdfPCell(new Phrase(tblListaSalidas.getColumnName(c), fuenteEncabezado));
+            encabezado.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            encabezado.setHorizontalAlignment(Element.ALIGN_CENTER);
+            tablaPDF.addCell(encabezado);
+        }
+
+        // Todas las filas
+        int filas = tblListaSalidas.getRowCount();
+        for (int f = 0; f < filas; f++) {
+            for (int c : columnasValidas) {
+                Object valor = tblListaSalidas.getValueAt(f, c);
+                String texto = (valor instanceof JButton) ? ((JButton) valor).getText() : (valor != null ? valor.toString() : "");
+                PdfPCell celda = new PdfPCell(new Phrase(texto, fuentePequena));
+                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tablaPDF.addCell(celda);
+            }
+        }
+
+        documento.add(tablaPDF);
+        documento.close();
+
+        JOptionPane.showMessageDialog(this, "PDF generado correctamente en:\n" + ruta);
+    }
+
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(this, "Error al generar PDF: " + e.getMessage());
+    e.printStackTrace();
+}   // TODO add your handling code here:
+    }//GEN-LAST:event_btnDescargarTodoActionPerformed
 
     private void tblListaSalidasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblListaSalidasMouseClicked
 int fila = tblListaSalidas.rowAtPoint(evt.getPoint());
@@ -206,7 +297,7 @@ int fila = tblListaSalidas.rowAtPoint(evt.getPoint());
 
             // === BOTÓN PDF ===
             if (nombre.equals("b_pdf")) {
-                System.out.println("Click en el botón PDF");
+                 generarPDF_Fila_ListaSalidas(fila); // <-- Genera solo la fila
             }
 
             // === BOTÓN ELIMINAR ===
@@ -259,8 +350,8 @@ int fila = tblListaSalidas.rowAtPoint(evt.getPoint());
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDescargarTodo;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
@@ -269,4 +360,126 @@ int fila = tblListaSalidas.rowAtPoint(evt.getPoint());
     private javax.swing.JTable tblListaSalidas;
     private javax.swing.JTextField txtGuiaRemisionBuscar1;
     // End of variables declaration//GEN-END:variables
+
+public void generarPDF_Fila_ListaSalidas(int fila) {
+    Document documento = new Document();
+    try {
+        if (fila < 0 || fila >= tblListaSalidas.getRowCount()) {
+            JOptionPane.showMessageDialog(null, "La fila seleccionada no es válida.");
+            return;
+        }
+
+        // Cuadro de diálogo para elegir ruta
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar reporte de salida");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
+        fileChooser.setFileFilter(filtro);
+
+        int seleccion = fileChooser.showSaveDialog(null);
+        if (seleccion != JFileChooser.APPROVE_OPTION) {
+            return; // Cancelado
+        }
+
+        File archivoSeleccionado = fileChooser.getSelectedFile();
+        String ruta = archivoSeleccionado.getAbsolutePath();
+        if (!ruta.toLowerCase().endsWith(".pdf")) {
+            ruta += ".pdf";
+        }
+
+        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+        documento.open();
+
+        // Fuentes
+        com.itextpdf.text.Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.BLACK);
+        com.itextpdf.text.Font fuenteSubtitulo = FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.LIGHT_GRAY);
+        com.itextpdf.text.Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9);
+        com.itextpdf.text.Font fuentePequena = FontFactory.getFont(FontFactory.HELVETICA, 8);
+
+        String fechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+        // Título
+        Paragraph titulo = new Paragraph("REPORTE DE SALIDA (LISTA)\n", fuenteTitulo);
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        documento.add(titulo);
+
+        // Subtítulo
+        Paragraph subtitulo = new Paragraph("Generado el: " + fechaHora + "\n\n", fuenteSubtitulo);
+        subtitulo.setAlignment(Element.ALIGN_RIGHT);
+        documento.add(subtitulo);
+
+        documento.add(new Paragraph("Datos de la fila seleccionada:\n\n", fuentePequena));
+
+        // Columnas válidas
+        int columnas = tblListaSalidas.getColumnCount();
+        List<Integer> columnasValidas = new ArrayList<>();
+        for (int c = 0; c < columnas; c++) {
+            String nombre = tblListaSalidas.getColumnName(c);
+            if (!nombre.equalsIgnoreCase("PDF") &&
+                !nombre.equalsIgnoreCase("ELIMINAR") &&
+                !nombre.equalsIgnoreCase("MODIFICAR")) {
+                columnasValidas.add(c);
+            }
+        }
+
+        // Tabla PDF
+        PdfPTable tablaPDF = new PdfPTable(columnasValidas.size());
+        tablaPDF.setWidthPercentage(100);
+        tablaPDF.setSpacingBefore(15f);
+        tablaPDF.setSpacingAfter(15f);
+
+        // Encabezados
+        for (int c : columnasValidas) {
+            PdfPCell encabezado = new PdfPCell(new Phrase(tblListaSalidas.getColumnName(c), fuenteEncabezado));
+            encabezado.setBackgroundColor(new BaseColor(102,153,0)); // Verde institucional
+            encabezado.setHorizontalAlignment(Element.ALIGN_CENTER);
+            encabezado.setBorderWidth(1f);
+            tablaPDF.addCell(encabezado);
+        }
+
+        // Datos de la fila
+        for (int c : columnasValidas) {
+            Object valor = tblListaSalidas.getValueAt(fila, c);
+            String texto = (valor instanceof JButton) ? ((JButton) valor).getText() : (valor != null ? valor.toString() : "");
+            PdfPCell celda = new PdfPCell(new Phrase(texto, fuentePequena));
+            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+            celda.setBorderWidth(0.5f);
+            tablaPDF.addCell(celda);
+        }
+
+        documento.add(tablaPDF);
+
+        // Pie de página
+        Paragraph pie = new Paragraph("Cooperativa Agraria Cafetalera Bagua Grande", 
+            FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, BaseColor.GRAY));
+        pie.setAlignment(Element.ALIGN_CENTER);
+        documento.add(pie);
+
+        JOptionPane.showMessageDialog(null, "PDF generado correctamente:\n" + ruta);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Error al generar PDF: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        if (documento.isOpen()) {
+            documento.close();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
