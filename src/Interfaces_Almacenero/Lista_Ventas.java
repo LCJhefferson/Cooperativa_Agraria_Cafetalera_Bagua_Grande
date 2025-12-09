@@ -5,30 +5,26 @@
 package Interfaces_Almacenero;
 
 import Clases.PDF_tabla;
-import Clases.BotonesTablas;
-import Clases.TablaSalidas;
-import com.itextpdf.text.BaseColor;
+import DAO.SalidaDAO;
+import Modelos.Salida;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import java.awt.Font;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
+
 
 /**
  *
@@ -38,36 +34,238 @@ public class Lista_Ventas extends javax.swing.JInternalFrame {
 
     
     private static Lista_Ventas instancia;
-        //creamos un avariable para el modelo la tabla
-    TablaSalidas v_tabla = new TablaSalidas();
-    //Declara una variable para guardar la fila activa,,,limpia con un control de estado.
-    private int filaEnEdicion = -1;
-    /**
-     * Creates new form Lista_Ventas
-     */
+    private SalidaDAO salidaDAO = new SalidaDAO();
+
     public Lista_Ventas() {
         initComponents();
-        
-                //llamos al mtodo llamar tabla y ponemos el nombre de la tabla
-        v_tabla.ver_tabla(tblListaSalidas);
-         // Quitar bordes y título
+
+        // Inicializar UI
+        configurarTabla();
+        cargarDatosTabla(null); // null => sin filtro, carga todo
+
+        // quitar bordes y título
         setBorder(null);
         BasicInternalFrameUI ui = (BasicInternalFrameUI) this.getUI();
         ui.setNorthPane(null);
 
-        // Abrir maximizado
         try {
             setMaximum(true);
         } catch (java.beans.PropertyVetoException e) {
             e.printStackTrace();
         }
     }
-    
-     public static Lista_Ventas getInstancia(){
-     if(instancia == null || instancia.isClosed()){
-     instancia = new Lista_Ventas();
-     }
-     return instancia;
+
+    public static Lista_Ventas getInstancia() {
+        if (instancia == null || instancia.isClosed()) {
+            instancia = new Lista_Ventas();
+        }
+        return instancia;
+    }
+
+    // ---------------------- Configurar tabla ----------------------
+    private void configurarTabla() {
+        DefaultTableModel modelo = new DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "ID", "Producto", "Cantidad", "Número Orden", "Destino",
+                    "Observaciones", "Fecha", "PDF", "Eliminar", "Modificar"
+                }) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column >= 7; // solo columnas de botones "clickables"
+            }
+        };
+
+        tblListaSalidas.setModel(modelo);
+        tblListaSalidas.setRowHeight(30);
+
+        // ocultar id
+        if (tblListaSalidas.getColumnModel().getColumnCount() > 0) {
+            tblListaSalidas.getColumnModel().getColumn(0).setMinWidth(0);
+            tblListaSalidas.getColumnModel().getColumn(0).setMaxWidth(0);
+        }
+    }
+
+    // ---------------------- Cargar datos desde BD ----------------------
+    /**
+     * Carga la tabla desde la base de datos.
+     * @param numeroOrdenFiltro si es null o vacío: carga todo; si no, filtra por numero_orden LIKE '%filtro%'
+     */
+    private void cargarDatosTabla(String numeroOrdenFiltro) {
+        DefaultTableModel modelo = (DefaultTableModel) tblListaSalidas.getModel();
+        modelo.setRowCount(0);
+
+        List<Salida> lista;
+        if (numeroOrdenFiltro == null || numeroOrdenFiltro.trim().isEmpty()) {
+            lista = salidaDAO.listarSalidas();
+        } else {
+            // aplicar filtro simple haciendo listar y filtrar en Java (sencillo) o crear DAO con filtro
+            lista = salidaDAO.listarSalidas();
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
+        for (Salida s : lista) {
+            // si hay filtro, aplicarlo aquí (por numeroOrden)
+            if (numeroOrdenFiltro != null && !numeroOrdenFiltro.trim().isEmpty()) {
+                String nro = s.getNumeroOrden() == null ? "" : s.getNumeroOrden();
+                if (!nro.toLowerCase().contains(numeroOrdenFiltro.trim().toLowerCase())) continue;
+            }
+
+            JButton btnPdf = new JButton("PDF");
+            btnPdf.setName("b_pdf");
+
+            JButton btnEliminar = new JButton("Eliminar");
+            btnEliminar.setName("b_eliminar");
+
+            JButton btnModificar = new JButton("Modificar");
+            btnModificar.setName("b_modificar");
+
+            String fechaStr = s.getFechaSalida() == null ? "" : sdf.format(s.getFechaSalida());
+
+            modelo.addRow(new Object[]{
+                s.getId(),
+                s.getNombreProducto(),
+                s.getCantidadSalida(),
+                s.getNumeroOrden() != null ? s.getNumeroOrden() : "",
+                s.getDestino(),
+                s.getObservaciones() != null ? s.getObservaciones() : "",
+                fechaStr,
+                btnPdf,
+                btnEliminar,
+                btnModificar
+            });
+        }
+    }
+
+    // ---------------------- Generar PDF de una salida (iText) ----------------------
+    private void generarPDF_Salida(Salida s) {
+        if (s == null) {
+            JOptionPane.showMessageDialog(this, "No se encontró la salida para generar PDF");
+            return;
+        }
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Guardar PDF de Salida");
+        String fileName = "salida_" + (s.getNumeroOrden() != null ? s.getNumeroOrden() : s.getId()) + ".pdf";
+        chooser.setSelectedFile(new File(fileName));
+        chooser.setFileFilter(new FileNameExtensionFilter("Archivo PDF", "pdf"));
+
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+
+        File archivo = chooser.getSelectedFile();
+
+        try (FileOutputStream fos = new FileOutputStream(archivo)) {
+            Document doc = new Document();
+            PdfWriter.getInstance(doc, fos);
+            doc.open();
+
+            Paragraph titulo = new Paragraph("COOPERATIVA AGRARIA CAFETALERA BAGUA GRANDE\nSALIDA DE PRODUCTO\n\n",
+                    FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16));
+            titulo.setAlignment(Element.ALIGN_CENTER);
+            doc.add(titulo);
+
+            PdfPTable tabla = new PdfPTable(2);
+            tabla.setWidthPercentage(100);
+
+            tabla.addCell("Producto:");
+            tabla.addCell(s.getNombreProducto());
+
+            tabla.addCell("Cantidad:");
+            tabla.addCell(String.valueOf(s.getCantidadSalida()));
+
+            tabla.addCell("Número de Orden:");
+            tabla.addCell(s.getNumeroOrden() != null ? s.getNumeroOrden() : "N/A");
+
+            tabla.addCell("Destino:");
+            tabla.addCell(s.getDestino());
+
+            tabla.addCell("Fecha de Salida:");
+            tabla.addCell(s.getFechaSalida() != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(s.getFechaSalida()) : "");
+
+            tabla.addCell("Observaciones:");
+            tabla.addCell(s.getObservaciones() != null ? s.getObservaciones() : "");
+
+            doc.add(tabla);
+            doc.close();
+
+            JOptionPane.showMessageDialog(this, "PDF generado correctamente:\n" + archivo.getAbsolutePath());
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al generar PDF: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // ---------------------- Eliminar una salida ----------------------
+    private void eliminarSalidaPorId(int idSalida) {
+        int r = JOptionPane.showConfirmDialog(this, "¿Eliminar esta salida? Se restituirá el stock (si tus triggers lo hacen).", "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (r != JOptionPane.YES_OPTION) return;
+
+        boolean ok = salidaDAO.eliminarSalida(idSalida);
+        if (ok) {
+            JOptionPane.showMessageDialog(this, "Salida eliminada correctamente");
+            cargarDatosTabla(txtGuiaRemisionBuscar1.getText().trim());
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al eliminar salida");
+        }
+    }
+
+    // ---------------------- Modificar una salida (dialogo simple) ----------------------
+    private void editarSalidaDialog(int idSalida) {
+        Salida s = salidaDAO.obtenerSalidaPorId(idSalida);
+        if (s == null) {
+            JOptionPane.showMessageDialog(this, "Salida no encontrada");
+            return;
+        }
+
+        // Pedir nuevos valores con dialogs; puedes reemplazar por un formulario más amigable
+        String nuevoProducto = (String) JOptionPane.showInputDialog(this,
+                "Producto (nombre):", "Editar producto", JOptionPane.PLAIN_MESSAGE,
+                null, null, s.getNombreProducto());
+        if (nuevoProducto == null) return; // canceló
+
+        String cantidadStr = JOptionPane.showInputDialog(this, "Cantidad:", s.getCantidadSalida());
+        if (cantidadStr == null) return;
+        double nuevaCantidad;
+        try {
+            nuevaCantidad = Double.parseDouble(cantidadStr);
+            if (nuevaCantidad <= 0) throw new NumberFormatException();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Cantidad inválida");
+            return;
+        }
+
+        String nuevoNumeroOrden = JOptionPane.showInputDialog(this, "Número de orden:", s.getNumeroOrden() != null ? s.getNumeroOrden() : "");
+        if (nuevoNumeroOrden == null) return;
+
+        String nuevoDestino = JOptionPane.showInputDialog(this, "Destino:", s.getDestino() != null ? s.getDestino() : "");
+        if (nuevoDestino == null) return;
+
+        String nuevasObs = JOptionPane.showInputDialog(this, "Observaciones:", s.getObservaciones() != null ? s.getObservaciones() : "");
+        if (nuevasObs == null) return;
+
+        // convertir nombreProducto a idProducto usando DAO
+        int idProducto = salidaDAO.obtenerIdProductoPorNombre(nuevoProducto);
+        if (idProducto == -1) {
+            JOptionPane.showMessageDialog(this, "Producto no válido o no activo");
+            return;
+        }
+
+        // actualizar objeto
+        s.setIdProducto(idProducto);
+        s.setCantidadSalida(nuevaCantidad);
+        s.setNumeroOrden(nuevoNumeroOrden.isEmpty() ? null : nuevoNumeroOrden);
+        s.setDestino(nuevoDestino);
+        s.setObservaciones(nuevasObs);
+
+        boolean ok = salidaDAO.actualizarSalida(s);
+        if (ok) {
+            JOptionPane.showMessageDialog(this, "Salida actualizada correctamente");
+            cargarDatosTabla(txtGuiaRemisionBuscar1.getText().trim());
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al actualizar salida");
+        }
     }
     
 
@@ -208,18 +406,45 @@ public class Lista_Ventas extends javax.swing.JInternalFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        String filtro = txtGuiaRemisionBuscar1.getText().trim();
+        cargarDatosTabla(filtro);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnDescargarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarTodoActionPerformed
   
-    PDF_tabla pdf = new PDF_tabla();
-    pdf.generarPDF_TablaCompleta(tblListaSalidas, "salidas");
+     // Mantengo tu función actual para generar PDF de la tabla completa
+        PDF_tabla pdf = new PDF_tabla();
+        pdf.generarPDF_TablaCompleta(tblListaSalidas, "salidas");
 
     }//GEN-LAST:event_btnDescargarTodoActionPerformed
 
     private void tblListaSalidasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblListaSalidasMouseClicked
-BotonesTablas handler = new BotonesTablas();
-    handler.manejarEventoTabla(tblListaSalidas, evt);
+        int fila = tblListaSalidas.rowAtPoint(evt.getPoint());
+        int col = tblListaSalidas.columnAtPoint(evt.getPoint());
+
+        if (fila == -1) return;
+
+        int idSalida = (int) tblListaSalidas.getValueAt(fila, 0);
+
+        // PDF (col 7)
+        if (col == 7) {
+            Salida s = salidaDAO.obtenerSalidaPorId(idSalida);
+            generarPDF_Salida(s);
+            return;
+        }
+
+        // Eliminar (col 8)
+        if (col == 8) {
+            eliminarSalidaPorId(idSalida);
+            return;
+        }
+
+        // Modificar (col 9)
+        if (col == 9) {
+            editarSalidaDialog(idSalida);
+            return;
+        }
+
     }//GEN-LAST:event_tblListaSalidasMouseClicked
 
 
