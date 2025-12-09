@@ -1,50 +1,64 @@
 
 package Interfaces_Almacenero;
 
-import Clases.PDF_tabla;
-import Clases.RenderTabla;
+import Clases.BotonesTablaCompras;
 import Clases.TablaCompras;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import javax.swing.table.DefaultTableModel;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import Clases.RenderTabla;
-import Clases.BotonesTablas;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import Conexion.Conexion;
+import java.sql.Connection; 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 
 
 public class Compras extends javax.swing.JInternalFrame {
     private static Compras instancia;
+// Variables de estado en la clase Compras
+    private int idCompraSeleccionada = -1;
+    private int filaEnEdicion = -1;
+    private boolean modoEdicion = false;
 
-    
+
+    // crea un objeto de BotonesTablaCompras 
+BotonesTablaCompras manejadorBotones;
     
     //creamos un avariable para el modelo la tabla
-    TablaCompras v_tabla = new TablaCompras();
-    //Declara una variable para guardar la fila activa,,,limpia con un control de estado.
-    private int filaEnEdicion = -1;
-
+    TablaCompras c_tabla = new TablaCompras();
+   
     
     public Compras() {
         initComponents();
         //llamos al mtodo llamar tabla y ponemos el nombre de la tabla
-        v_tabla.ver_tabla(tblCompras);
+        c_tabla.cargarDatos(tblCompras);
+        
+        
+            // Instancia el manejador pasando la tabla y los campos del formulario
+    manejadorBotones = new BotonesTablaCompras(
+        tblCompras,
+        txtCantidad,
+        txtPrecio,
+        txtHumedad,
+        txtRendimiento,
+        txtGuia,
+        txtSocio
+    );
+
+    // Agrega el listener de clics a la tabla
+    tblCompras.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            manejadorBotones.manejarEventoTabla(evt);
+        }
+    });
+
+        
+        
+        
         
         setBorder(null);
         BasicInternalFrameUI ui = (BasicInternalFrameUI) this.getUI();
@@ -58,7 +72,8 @@ public class Compras extends javax.swing.JInternalFrame {
     }
     
     
-    
+  
+
   
    
     
@@ -95,9 +110,9 @@ public static Compras getInstancia(){
         txtRendimiento = new javax.swing.JTextField();
         cbxProducto = new javax.swing.JComboBox<>();
         btnAgregar = new javax.swing.JButton();
-        txtSocio = new javax.swing.JTextField();
+        txtDniSocio = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        txtSocio1 = new javax.swing.JTextField();
+        txtSocio = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblCompras = new javax.swing.JTable();
@@ -162,18 +177,18 @@ public static Compras getInstancia(){
             }
         });
 
-        txtSocio.addActionListener(new java.awt.event.ActionListener() {
+        txtDniSocio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtSocioActionPerformed(evt);
+                txtDniSocioActionPerformed(evt);
             }
         });
 
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("Socio");
 
-        txtSocio1.addActionListener(new java.awt.event.ActionListener() {
+        txtSocio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtSocio1ActionPerformed(evt);
+                txtSocioActionPerformed(evt);
             }
         });
 
@@ -209,8 +224,8 @@ public static Compras getInstancia(){
                             .addComponent(txtCantidad)
                             .addComponent(txtCobase)
                             .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(txtDniSocio)
                     .addComponent(txtSocio)
-                    .addComponent(txtSocio1)
                     .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
@@ -258,10 +273,10 @@ public static Compras getInstancia(){
                 .addGap(33, 33, 33)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(txtSocio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtDniSocio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(27, 27, 27)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSocio1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSocio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
                 .addGap(57, 57, 57)
                 .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -401,18 +416,87 @@ public static Compras getInstancia(){
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void tblComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblComprasMouseClicked
-BotonesTablas handler = new BotonesTablas();
-    handler.manejarEventoTabla(tblCompras, evt);       
+    int fila = tblCompras.rowAtPoint(evt.getPoint());
+    int columna = tblCompras.columnAtPoint(evt.getPoint());
+    if (fila < 0 || columna < 0) return;
+
+    Object valor = tblCompras.getValueAt(fila, columna);
+    if (!(valor instanceof JButton)) return;
+
+    JButton boton = (JButton) valor;
+    String nombre = boton.getName();
+
+    // Obtén el ID con seguridad de tipos
+    Object idObj = tblCompras.getValueAt(fila, 0);
+    int idCompra;
+    if (idObj instanceof Integer) {
+        idCompra = (Integer) idObj;
+    } else {
+        try { idCompra = Integer.parseInt(String.valueOf(idObj)); }
+        catch (NumberFormatException e) { 
+            JOptionPane.showMessageDialog(null, "ID de compra inválido."); 
+            return; 
+        }
+    }
+
+    switch (nombre) {
+        case "b_pdf":
+            generarPDFDesdeTabla(fila);
+            break;
+
+        case "b_eliminar":
+            eliminarCompra(idCompra);
+            break;
+
+        case "b_modificar":
+        cargarDatosEnFormulario(fila, columna);
+
+        // Ya no necesitas crear btnGuardar aquí si tu método lo hace.
+        // Si prefieres hacerlo aquí, asegúrate de no duplicarlo en el método.
+        idCompraSeleccionada = idCompra;
+        filaEnEdicion = fila;
+        modoEdicion = true;
+
+        btnAgregar.setEnabled(false); // Registrar inactivo mientras editas
+        break;
+
+
+        case "b_guardar":
+        if (idCompraSeleccionada == -1 || filaEnEdicion != fila) {
+            JOptionPane.showMessageDialog(null, "No hay compra en edición.");
+            return;
+        }
+
+        boolean exito = guardarCambiosEnBD(idCompraSeleccionada, fila);
+        if (exito) {
+            JOptionPane.showMessageDialog(null, "Compra actualizada correctamente.");
+
+            JButton btnModificar = new JButton("Modificar");
+            btnModificar.setName("b_modificar");
+            tblCompras.setValueAt(btnModificar, fila, columna);
+            tblCompras.repaint();
+
+            idCompraSeleccionada = -1;
+            filaEnEdicion = -1;
+            modoEdicion = false;
+            btnAgregar.setEnabled(true);
+
+            new TablaCompras().cargarDatos(tblCompras);
+        }
+        break;
+
+    }
     }//GEN-LAST:event_tblComprasMouseClicked
+    
+    private void txtDniSocioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDniSocioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDniSocioActionPerformed
 
     private void txtSocioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSocioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSocioActionPerformed
 
-    private void txtSocio1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSocio1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtSocio1ActionPerformed
-    
+    /*   
 public void generarPDF_Fila(int fila) {
     try {
         String ruta = "C:/reportes/Compra_Fila_" + fila + ".pdf";
@@ -453,6 +537,71 @@ public void generarPDF_Fila(int fila) {
         JOptionPane.showMessageDialog(null, "Error al generar el PDF: " + e.getMessage());
     }
 }
+*/
+private void generarPDFDesdeTabla(int fila) {
+    TablaCompras tabla = new TablaCompras();
+    tabla.generarPDF_Fila(tblCompras, fila);
+}
+
+private void eliminarCompra(int idCompra) {
+    try (Connection con = Conexion.getConexion();
+     PreparedStatement ps = con.prepareStatement("DELETE FROM compra WHERE id=?")) {
+
+    ps.setInt(1, idCompra);
+    ps.executeUpdate();
+    JOptionPane.showMessageDialog(null, "Compra eliminada.");
+    new TablaCompras().cargarDatos(tblCompras);
+
+} catch (Exception e) {
+    e.printStackTrace();
+}
+
+}
+
+private void cargarDatosEnFormulario(int fila, int columna) {
+    // Cargar datos al formulario
+    txtCantidad.setText(tblCompras.getValueAt(fila, 2).toString());
+    txtPrecio.setText(tblCompras.getValueAt(fila, 3).toString());
+    txtHumedad.setText(tblCompras.getValueAt(fila, 5).toString());
+    txtRendimiento.setText(tblCompras.getValueAt(fila, 6).toString());
+    txtGuia.setText(tblCompras.getValueAt(fila, 7).toString());
+    txtSocio.setText(tblCompras.getValueAt(fila, 8).toString());
+
+    // Cambiar el botón de la celda a "Guardar"
+    JButton btnGuardar = new JButton("Guardar");
+    btnGuardar.setName("b_guardar");
+    tblCompras.setValueAt(btnGuardar, fila, columna);
+    tblCompras.repaint();
+
+    filaEnEdicion = fila;
+    idCompraSeleccionada = Integer.parseInt(tblCompras.getValueAt(fila, 0).toString());
+}
+
+
+private boolean guardarCambiosEnBD(int fila, int columna) {
+    try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(
+                 "UPDATE compra SET cantidad=?, precio=?, humedad=?, rendimiento=?, guia_ingreso=? WHERE id=?")) {
+
+        ps.setDouble(1, Double.parseDouble(txtCantidad.getText()));
+        ps.setDouble(2, Double.parseDouble(txtPrecio.getText()));
+        ps.setDouble(3, Double.parseDouble(txtHumedad.getText()));
+        ps.setDouble(4, Double.parseDouble(txtRendimiento.getText()));
+        ps.setString(5, txtGuia.getText());
+        ps.setInt(6, idCompraSeleccionada);
+
+        ps.executeUpdate();
+        JOptionPane.showMessageDialog(null, "Compra actualizada correctamente.");
+        return true;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error al actualizar la compra: " + e.getMessage());
+        return false;
+    }
+}
+
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -474,20 +623,16 @@ public void generarPDF_Fila(int fila) {
     public javax.swing.JTable tblCompras;
     private javax.swing.JTextField txtCantidad;
     private javax.swing.JTextField txtCobase;
+    private javax.swing.JTextField txtDniSocio;
     private javax.swing.JTextField txtGuia;
     private javax.swing.JTextField txtHumedad;
     private javax.swing.JTextField txtPrecio;
     private javax.swing.JTextField txtRendimiento;
     private javax.swing.JTextField txtSocio;
-    private javax.swing.JTextField txtSocio1;
     // End of variables declaration//GEN-END:variables
 
     
-    
-    
-    
-    
-    
+   
     
 
 }

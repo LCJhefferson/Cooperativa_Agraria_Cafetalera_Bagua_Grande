@@ -102,8 +102,8 @@
                                   <Component id="txtPrecio" min="-2" pref="80" max="-2" attributes="0"/>
                               </Group>
                           </Group>
+                          <Component id="txtDniSocio" max="32767" attributes="0"/>
                           <Component id="txtSocio" max="32767" attributes="0"/>
-                          <Component id="txtSocio1" max="32767" attributes="0"/>
                           <Component id="btnAgregar" min="-2" pref="219" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="25" max="32767" attributes="0"/>
@@ -168,11 +168,11 @@
                       <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtSocio" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtDniSocio" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="txtSocio1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtSocio" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
@@ -277,9 +277,9 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAgregarActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JTextField" name="txtSocio">
+            <Component class="javax.swing.JTextField" name="txtDniSocio">
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtSocioActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtDniSocioActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel8">
@@ -288,9 +288,9 @@
                 <Property name="text" type="java.lang.String" value="Socio"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="txtSocio1">
+            <Component class="javax.swing.JTextField" name="txtSocio">
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtSocio1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtSocioActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
