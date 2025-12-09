@@ -40,7 +40,7 @@ public class Lista_Compras extends javax.swing.JInternalFrame {
          
          
     //creamos un avariable para el modelo la tabla
-    TablaCompras v_tabla = new TablaCompras();
+    TablaCompras c_tabla = new TablaCompras();
     //Declara una variable para guardar la fila activa,,,limpia con un control de estado.
     private int filaEnEdicion = -1;
 
@@ -55,7 +55,7 @@ public class Lista_Compras extends javax.swing.JInternalFrame {
        
         
          //llamos al mtodo llamar tabla y ponemos el nombre de la tabla
-        v_tabla.ver_tabla(tblListaCompras);
+        c_tabla.cargarDatos(tblListaCompras);
         
         
         
@@ -253,8 +253,12 @@ public class Lista_Compras extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void tblListaComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblListaComprasMouseClicked
-BotonesTablas handler = new BotonesTablas();
-    handler.manejarEventoTabla(tblListaCompras, evt);
+  TablaCompras tabla = new TablaCompras();
+        tabla.cargarDatos(tblListaCompras);
+      
+
+      //  BotonesTablas handler = new BotonesTablas();
+   // handler.manejarEventoTabla(tblListaCompras, evt);
     }//GEN-LAST:event_tblListaComprasMouseClicked
 
     private void btnDescargarTodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarTodoActionPerformed

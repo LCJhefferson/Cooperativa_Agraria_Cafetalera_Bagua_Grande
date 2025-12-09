@@ -1,99 +1,176 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Clases;
 
-import java.awt.Component;
+import Conexion.Conexion;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JTable;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-
-/**
- *
- * @author jheff
- */
 public class TablaCompras {
-    //creamos un metodo para ver la tabla 
-    public void ver_tabla(JTable tablaCompras){
-       
-        //AQUI ESTOMS RENDRESISANDO LA TABLA
-        tablaCompras.setDefaultRenderer(Object.class, new RenderTabla());
-        //
-        JButton btnpdf = new JButton("pdf");
-        btnpdf.setName("b_pdf");
-        
-        JButton btnEliminar = new JButton("Eliminar");
-        btnEliminar.setName("b_eliminar");
-        
-        JButton btnModificar = new JButton("Modificar");
-        btnModificar.setName("b_modificar");
-        
-        JButton btnGuardar = new JButton("Guardar");
-        btnGuardar.setName("b_guardar");
 
-        
-     DefaultTableModel v_tabla = new DefaultTableModel(
-    new Object[][] {
-        {"CA","120","150","95","45","57","AK125JK12","Juan Lopez ","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
-        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
-        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
-        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
-        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
-        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
-        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
-        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
-        {"CO","120","150","95","45","57","AK125JK12","Juan Lopez","12-02-2024:12:00",btnpdf,btnEliminar,btnModificar},
-        {"CA", "85", "135", "88", "42", "60", "BX982LK45", "Maria Perez","31-04-2025:20:00", btnpdf, btnEliminar, btnModificar},
-    },
-    new Object[]{"Producto","Cantidad","precio","Cobase","Humedad","Rendimiento","Guia de remision","Socio","Fecha","PDF","ELIMINAR","MODIFICAR"}
-) {
-    boolean editable = false; // bandera para saber si se puede editar
-
+    // Método para cargar datos desde la BD
+    public void cargarDatos(JTable tblCompras) {
+        DefaultTableModel modelo = new DefaultTableModel() {
     @Override
     public boolean isCellEditable(int row, int column) {
-        // permite editar solo si está en modo edición y no es una columna de botones
-        return editable && column < 8;
-    }
-
-    public void setEditable(boolean editable) {
-        this.editable = editable;
+        return false; // ninguna celda editable
     }
 };
 
-    
-        
-        tablaCompras.setModel(v_tabla);
-        
-        //codigo par ahacer la trnasicion de botones de modificar a guardar 
-        
-        
-       for (int column = 0; column < tablaCompras.getColumnCount(); column++) {
-    TableColumn tableColumn = tablaCompras.getColumnModel().getColumn(column);
-    int preferredWidth = 50; 
-    int maxWidth = 300;
+        modelo.setColumnIdentifiers(new Object[]{
+            "ID", "Producto", "Cantidad", "Precio", "Cobase", "Humedad", "Rendimiento",
+            "Guía de remisión", "Socio", "Fecha", "PDF", "Eliminar", "Modificar"
+        });
 
-    for (int row = 0; row < tablaCompras.getRowCount(); row++) {
-        TableCellRenderer cellRenderer = tablaCompras.getCellRenderer(row, column);
-        Component c = tablaCompras.prepareRenderer(cellRenderer, row, column);
-        int width = c.getPreferredSize().width + 10;
-        preferredWidth = Math.max(preferredWidth, width);
+        try (Connection con = Conexion.getConexion();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(
+                 "SELECT c.id, p.nombre AS producto, c.cantidad, c.precio, cb.nombre AS cobase, " +
+                 "c.humedad, c.rendimiento, c.guia_ingreso, s.nombre AS socio, c.fecha_registro " +
+                 "FROM compra c " +
+                 "JOIN producto p ON c.id_producto = p.id " +
+                 "JOIN socio s ON c.id_socio = s.id " +
+                 "JOIN cobase cb ON s.id_cobase = cb.id")) {
 
-        if (preferredWidth >= maxWidth) {
-            preferredWidth = maxWidth;
-            break;
+            while (rs.next()) {
+                modelo.addRow(new Object[]{
+                    rs.getInt("id"),
+                    rs.getString("producto"),
+                    rs.getDouble("cantidad"),
+                    rs.getDouble("precio"),
+                    rs.getString("cobase"),
+                    rs.getDouble("humedad"),
+                    rs.getDouble("rendimiento"),
+                    rs.getString("guia_ingreso"),
+                    rs.getString("socio"),
+                    rs.getTimestamp("fecha_registro"),
+                    crearBoton("PDF", "b_pdf"),
+                    crearBoton("Eliminar", "b_eliminar"),
+                    crearBoton("Modificar", "b_modificar")
+                });
+            }
+
+            tblCompras.setModel(modelo);
+            tblCompras.setRowHeight(30);
+            tblCompras.setDefaultRenderer(Object.class, new RenderTabla());
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    tableColumn.setPreferredWidth(preferredWidth);
+
+    // Método  para crear botones
+private JButton crearBoton(String texto, String nombre) {
+    JButton boton = new JButton(texto);
+    boton.setName(nombre);
+    return boton;
 }
 
-        
-      
-        //hacemos las celdas mas grandes
-        tablaCompras.setRowHeight(30);
 
-    }       
-  
+    // Lógica del botón PDF
+  public void generarPDF_Fila(JTable tblCompras, int fila) {
+    try {
+        String ruta = "C:/reportes/Compra_Fila_" + fila + ".pdf";
+
+        Document documento = new Document();
+        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+        documento.open();
+
+        // TÍTULO
+        documento.add(new Paragraph("REPORTE DE COMPRA (FILA " + fila + ")\n\n"));
+
+        PdfPTable tablaPDF = new PdfPTable(tblCompras.getColumnCount());
+
+        // ENCABEZADOS
+        for (int c = 0; c < tblCompras.getColumnCount(); c++) {
+            tablaPDF.addCell(tblCompras.getColumnName(c));
+        }
+
+        // DATOS DE LA FILA A EXPORTAR
+        for (int c = 0; c < tblCompras.getColumnCount(); c++) {
+            Object valor = tblCompras.getValueAt(fila, c);
+            if (valor instanceof JButton btn) {
+                tablaPDF.addCell(btn.getText());
+            } else {
+                tablaPDF.addCell(valor != null ? valor.toString() : "");
+            }
+        }
+
+        documento.add(tablaPDF);
+        documento.close();
+
+        JOptionPane.showMessageDialog(null, "PDF generado correctamente en: " + ruta);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error al generar el PDF: " + e.getMessage());
+    }
 }
+
+
+    // Lógica del botón Eliminar
+    private void eliminarCompra(int idCompra, JTable tabla) {
+        int confirm = JOptionPane.showConfirmDialog(null,
+                "¿Seguro que deseas eliminar la compra ID: " + idCompra + "?",
+                "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try (Connection con = Conexion.getConexion();
+                 PreparedStatement ps = con.prepareStatement("DELETE FROM compra WHERE id = ?")) {
+                ps.setInt(1, idCompra);
+                ps.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Compra eliminada correctamente.");
+                cargarDatos(tabla); // refrescar tabla
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Lógica del botón Modificar
+    private void modificarCompra(int idCompra, JTable tabla, int fila) {
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(
+                 "UPDATE compra SET cantidad=?, precio=?, humedad=?, rendimiento=? WHERE id=?")) {
+
+            double cantidad = Double.parseDouble(tabla.getValueAt(fila, 2).toString());
+            double precio = Double.parseDouble(tabla.getValueAt(fila, 3).toString()); 
+            double humedad = Double.parseDouble(tabla.getValueAt(fila, 5).toString());
+            double rendimiento = Double.parseDouble(tabla.getValueAt(fila, 6).toString());
+
+            ps.setDouble(1, cantidad);
+            ps.setDouble(2, precio);
+            ps.setDouble(3, humedad);
+            ps.setDouble(4, rendimiento);
+            ps.setInt(5, idCompra);
+
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Compra modificada correctamente.");
+            cargarDatos(tabla); // refrescar tabla
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    
+    
+    
+    
+   
+    
+    
+    
+    
+    
+}
+
