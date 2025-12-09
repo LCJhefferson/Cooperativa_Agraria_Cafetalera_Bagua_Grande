@@ -459,12 +459,13 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="LBLTitulo" min="-2" pref="445" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
                           <Component id="LBLUbicacion" pref="412" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="232" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="LBLTitulo" min="-2" pref="445" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="btnCerrarSecion" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -474,8 +475,11 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="LBLTitulo" min="-2" pref="35" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="LBLTitulo" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                      <Component id="btnCerrarSecion" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                   <Component id="LBLUbicacion" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="15" max="32767" attributes="0"/>
               </Group>
@@ -495,6 +499,14 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Cooperativa Agraria Cafetalera Bagua Grande"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnCerrarSecion">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Cerrar Secion"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCerrarSecionActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

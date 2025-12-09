@@ -4,6 +4,7 @@
  */
 package Interfaces_Almacenero;
 
+import Interfaces_generales.Login;
 import java.security.Timestamp;
 import java.time.LocalDateTime;
 import javax.swing.JFrame;
@@ -61,6 +62,7 @@ public class Menu_Almacenero extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         LBLUbicacion = new javax.swing.JLabel();
         LBLTitulo = new javax.swing.JLabel();
+        btnCerrarSecionAlmacenero = new javax.swing.JButton();
         Principal = new javax.swing.JDesktopPane();
 
         jFrame1.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -316,6 +318,13 @@ public class Menu_Almacenero extends javax.swing.JFrame {
         LBLTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         LBLTitulo.setText("Cooperativa Agraria Cafetalera Bagua Grande");
 
+        btnCerrarSecionAlmacenero.setText("Cerrar Secion");
+        btnCerrarSecionAlmacenero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCerrarSecionAlmaceneroActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -324,17 +333,21 @@ public class Menu_Almacenero extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(LBLTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(LBLUbicacion, javax.swing.GroupLayout.DEFAULT_SIZE, 885, Short.MAX_VALUE)
-                        .addGap(232, 232, 232))))
+                        .addGap(232, 232, 232))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(LBLTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCerrarSecionAlmacenero)
+                        .addGap(103, 103, 103))))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(LBLTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(LBLTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCerrarSecionAlmacenero))
                 .addGap(18, 18, 18)
                 .addComponent(LBLUbicacion)
                 .addContainerGap(15, Short.MAX_VALUE))
@@ -449,6 +462,28 @@ actualizarNavegacion("Lista de salidad", "Lista de salidad");
         actualizarNavegacion("Precio del Cafe ", "Precio del Cafe hoy" );
     }//GEN-LAST:event_btnPrecio_diaActionPerformed
 
+    private void btnCerrarSecionAlmaceneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSecionAlmaceneroActionPerformed
+// 1. (Opcional) Preguntar si está seguro
+    int confirmacion = javax.swing.JOptionPane.showConfirmDialog(
+        this, 
+        "¿Está seguro que desea cerrar sesión?", 
+        "Cerrar Sesión", 
+        javax.swing.JOptionPane.YES_NO_OPTION
+    );
+
+    // Si el usuario dice que SÍ (YES_OPTION es 0)
+    if (confirmacion == javax.swing.JOptionPane.YES_OPTION) {
+        
+        // 2. Abrir la ventana de Login nuevamente
+        // Asegúrate que 'Login' sea el nombre exacto de tu clase JFrame de inicio
+        Login login = new Login(); 
+        login.setVisible(true);
+        
+        // 3. Cerrar la ventana actual (el menú donde está el botón)
+        this.dispose();
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCerrarSecionAlmaceneroActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -497,6 +532,7 @@ actualizarNavegacion("Lista de salidad", "Lista de salidad");
     private javax.swing.JButton ListaVentas;
     private javax.swing.JPanel MenuPrincipal;
     private javax.swing.JDesktopPane Principal;
+    private javax.swing.JButton btnCerrarSecionAlmacenero;
     private javax.swing.JButton btnPrecio_dia;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;

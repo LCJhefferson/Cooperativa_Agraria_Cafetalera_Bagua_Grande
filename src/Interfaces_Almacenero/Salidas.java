@@ -142,7 +142,7 @@ public class Salidas extends javax.swing.JInternalFrame {
 
     private void limpiarCampos() {
         filaEnEdicion = -1;
-        jButton2.setText("REGISTRAR");
+        btnRegistrar.setText("REGISTRAR");
         txtCantidad.setText("");
         txtNumeroOrden.setText("");
         txtDestino.setText("");
@@ -216,7 +216,7 @@ public class Salidas extends javax.swing.JInternalFrame {
             tabla.addCell("Cantidad:");
             tabla.addCell(String.valueOf(s.getCantidadSalida()));
 
-            tabla.addCell("Número de Orden:");
+            tabla.addCell("Número Orden:");
             tabla.addCell(s.getNumeroOrden() != null ? s.getNumeroOrden() : "N/A");
 
             tabla.addCell("Destino:");
@@ -250,7 +250,7 @@ public class Salidas extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
+        btnRegistrar = new javax.swing.JButton();
         cbxProducto = new javax.swing.JComboBox<>();
         txtNumeroOrden = new javax.swing.JTextField();
         txtObservaciones = new javax.swing.JTextField();
@@ -267,11 +267,11 @@ public class Salidas extends javax.swing.JInternalFrame {
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jButton2.setText("REGISTRAR");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnRegistrar.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnRegistrar.setText("REGISTRAR");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnRegistrarActionPerformed(evt);
             }
         });
 
@@ -312,7 +312,7 @@ public class Salidas extends javax.swing.JInternalFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(16, 16, 16)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -359,7 +359,7 @@ public class Salidas extends javax.swing.JInternalFrame {
                     .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11))
                 .addGap(70, 70, 70)
-                .addComponent(jButton2)
+                .addComponent(btnRegistrar)
                 .addGap(484, 484, 484))
         );
 
@@ -422,7 +422,7 @@ public class Salidas extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbxProductoActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
         if (!validarCampos()) return;
 
         try {
@@ -462,7 +462,7 @@ public class Salidas extends javax.swing.JInternalFrame {
                     JOptionPane.showMessageDialog(this, "Error al actualizar salida");
                 }
                 filaEnEdicion = -1;
-                jButton2.setText("REGISTRAR");
+                btnRegistrar.setText("REGISTRAR");
             }
 
             limpiarCampos();
@@ -472,7 +472,7 @@ public class Salidas extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
             e.printStackTrace();
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void tblSalidasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSalidasMouseClicked
         int fila = tblSalidas.rowAtPoint(evt.getPoint());
@@ -513,7 +513,7 @@ public class Salidas extends javax.swing.JInternalFrame {
                 txtDestino.setText(s.getDestino());
                 txtObservaciones.setText(s.getObservaciones() != null ? s.getObservaciones() : "");
                 filaEnEdicion = fila;
-                jButton2.setText("ACTUALIZAR");
+                btnRegistrar.setText("ACTUALIZAR");
             }
             return;
         }
@@ -521,8 +521,8 @@ public class Salidas extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnRegistrar;
     private javax.swing.JComboBox<String> cbxProducto;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;

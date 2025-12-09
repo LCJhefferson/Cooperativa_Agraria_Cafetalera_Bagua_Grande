@@ -9,18 +9,29 @@ import Interfaces_Almacenero.Menu_Almacenero;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import Conexion.Conexion; // Asegúrate que este import coincida con tu paquete
 /**
  *
  * @author jheff
  */
 public class Login extends javax.swing.JFrame {
-           
+           // Variable global para que los espacios sean siempre idénticos
+private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemplo
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
         setLocationRelativeTo(null); // centra la ventana
+        
+        
+        // Agrega esta línea aquí para llamar al metodo cargar
+        //roles que llena el combo box con los datos de la bd:
+    cargarRoles();
     }
 
     /**
@@ -83,7 +94,6 @@ public class Login extends javax.swing.JFrame {
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Usuario o rol.png"))); // NOI18N
         jLabel3.setText("Rol");
 
-        CbxTipoUsuario.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrador", "Almacenero", " " }));
         CbxTipoUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CbxTipoUsuarioActionPerformed(evt);
@@ -206,35 +216,53 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnIniciarActionPerformed
-
     String usuario = TxtUsuario.getText().trim();
     String contrasena = new String(TxtContraseña.getPassword()).trim();
     String tipoSeleccionado = CbxTipoUsuario.getSelectedItem().toString();
 
+
+
     if (usuario.isEmpty() || contrasena.isEmpty()) {
+
         TxtTexto.setText("Debe ingresar un usuario y contraseña");
         TxtTexto.setForeground(Color.RED);
+
         return;
     }
-
     // Llamada al DAO real
     UsuarioDAO dao = new UsuarioDAO();
     int rol = dao.validarLogin(usuario, contrasena);
-
     if (rol == -1) {
+
         TxtTexto.setText("Usuario o contraseña incorrectos");
         TxtTexto.setForeground(Color.RED);
         return;
-    }
 
+    }
     // Si llega aquí, el usuario existe
+
     TxtTexto.setText("");
     JOptionPane.showMessageDialog(this, "Bienvenido " + usuario);
-
     // Validación de rol por BD
-    switch (rol) {
 
-        case 1: // Administrador
+  // ... validaciones anteriores de usuario y contraseña ...
+
+   switch (rol) {
+
+        case 1: // AHORA MASTER ES EL 1
+            // Usamos la variable constante ROL_SECRETO (o "      ")
+            if (!tipoSeleccionado.equals(TEXTO_SECRETO)) { 
+                TxtTexto.setText("Seleccione el rol correcto");
+                TxtTexto.setForeground(Color.RED);
+                return;
+            }
+            // Lógica de Master (entra al menú de Admin)
+            Interfaces_Administrador.Menu_Administrador adminMaster = new Interfaces_Administrador.Menu_Administrador();
+            adminMaster.setVisible(true);
+            this.dispose();
+            break;
+
+        case 2: // AHORA ADMINISTRADOR ES EL 2
             if (!tipoSeleccionado.equals("Administrador")) {
                 TxtTexto.setText("Seleccione el rol correcto");
                 TxtTexto.setForeground(Color.RED);
@@ -245,7 +273,7 @@ public class Login extends javax.swing.JFrame {
             this.dispose();
             break;
 
-        case 2: // Almacenero
+        case 3: // SUPONIENDO QUE ALMACENERO ES EL 3
             if (!tipoSeleccionado.equals("Almacenero")) {
                 TxtTexto.setText("Seleccione el rol correcto");
                 TxtTexto.setForeground(Color.RED);
@@ -261,8 +289,7 @@ public class Login extends javax.swing.JFrame {
             TxtTexto.setForeground(Color.RED);
             break;
     }
-
-
+    
 
     }//GEN-LAST:event_BtnIniciarActionPerformed
 
@@ -309,7 +336,37 @@ public class Login extends javax.swing.JFrame {
             }
         });
     }
+    
+private void cargarRoles() {
+    Connection cn = Conexion.getConexion();
+    
+    // Tu consulta SQL para poner al Master primero está PERFECTA
+    String sql = "SELECT nombre FROM roles " +
+                 "ORDER BY CASE WHEN nombre = 'Master' THEN 1 ELSE 2 END, nombre ASC";
 
+    try {
+        PreparedStatement pst = cn.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+
+        CbxTipoUsuario.removeAllItems();
+
+        while (rs.next()) {
+            String nombreRol = rs.getString("nombre");
+            
+            if (nombreRol.equalsIgnoreCase("Master")) {
+                // USAMOS LA VARIABLE AQUÍ
+                CbxTipoUsuario.addItem(TEXTO_SECRETO); 
+            } else {
+                CbxTipoUsuario.addItem(nombreRol);
+            }
+        }
+        
+        rs.close();
+        pst.close();
+    } catch (SQLException e) {
+        System.out.println("Error al cargar roles: " + e.getMessage());
+    }
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnIniciar;
     private javax.swing.JComboBox<String> CbxTipoUsuario;

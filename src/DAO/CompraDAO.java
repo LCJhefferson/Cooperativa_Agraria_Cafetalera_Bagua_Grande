@@ -10,31 +10,34 @@ public class CompraDAO {
 
     // Registrar compra (los triggers calcularán precio y validarán requisitos)
     public boolean registrarCompra(Compra c) {
-        String sql = """
-            INSERT INTO compra(id_usuario, id_producto, id_socio, rendimiento, humedad, guia_ingreso, cantidad, precio)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """;
+    String sql = """
+        INSERT INTO compra (id_usuario, id_producto, cantidad, humedad,
+                 precio, rendimiento, guia_ingreso, id_socio, fecha_registro)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """;
 
-        try (Connection cn = Conexion.getConexion();
-             PreparedStatement pst = cn.prepareStatement(sql)) {
+    try (Connection cn = Conexion.getConexion();
+            
+         PreparedStatement pst = cn.prepareStatement(sql)) {
 
-            pst.setInt(1, c.getIdUsuario());
-            pst.setInt(2, c.getIdProducto());
-            pst.setInt(3, c.getIdSocio());
-            pst.setDouble(4, c.getRendimiento());
-            pst.setDouble(5, c.getHumedad());
-            pst.setString(6, c.getGuiaIngreso());
-            pst.setDouble(7, c.getCantidad());
-            pst.setDouble(8, c.getPrecio());
+        pst.setInt(1, c.getIdUsuario());
+        pst.setInt(2, c.getIdProducto());
+        pst.setDouble(3, c.getCantidad());
+        pst.setDouble(4, c.getHumedad());
+        pst.setDouble(5, c.getPrecio());
+        pst.setDouble(6, c.getRendimiento());
+        pst.setString(7, c.getGuiaIngreso());
+        pst.setInt(8, c.getIdSocio());
+        pst.setString(9, c.getFechaRegistro());
 
-            pst.executeUpdate();
-            return true;
+        pst.executeUpdate();
+        return true;
 
-        } catch (SQLException e) {
-            System.out.println("Error al registrar compra: " + e.getMessage());
-            return false;
-        }
+    } catch (SQLException e) {
+        System.out.println("Error al registrar compra: " + e.getMessage());
+        return false;
     }
+}
 
     // Listar todas las compras
     public List<Compra> listarCompras() {
@@ -69,4 +72,54 @@ public class CompraDAO {
 
         return lista;
     }
+    
+    
+    
+    public boolean actualizarCompra(Compra c) {
+    String sql = """
+        UPDATE compra SET cantidad=?, precio=?, humedad=?, rendimiento=?, guia_ingreso=? WHERE id=?
+        """;
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement(sql)) {
+
+        pst.setDouble(1, c.getCantidad());
+        pst.setDouble(2, c.getPrecio());
+        pst.setDouble(3, c.getHumedad());
+        pst.setDouble(4, c.getRendimiento());
+        pst.setString(5, c.getGuiaIngreso());
+        pst.setInt(6, c.getId());
+
+        pst.executeUpdate();
+        return true;
+    } catch (SQLException e) {
+        System.out.println("Error al actualizar compra: " + e.getMessage());
+        return false;
+    }
+}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
