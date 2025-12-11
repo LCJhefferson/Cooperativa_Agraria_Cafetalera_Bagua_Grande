@@ -123,7 +123,28 @@ public class UsuarioDAO {
     
     
     
-    
+    public int obtenerIdUsuario(String nombreUsuario) {
+    int id = -1; // Valor por defecto si no se encuentra
+    Connection cn = Conexion.getConexion();
+    // Asegúrate que la columna se llame 'usuario' o 'nombre' según tu BD
+    String sql = "SELECT id FROM usuarios WHERE usuario = ?"; 
+
+    try {
+        PreparedStatement pst = cn.prepareStatement(sql);
+        pst.setString(1, nombreUsuario);
+        ResultSet rs = pst.executeQuery();
+
+        if (rs.next()) {
+            id = rs.getInt("id");
+        }
+        
+        rs.close();
+        pst.close();
+    } catch (SQLException e) {
+        System.out.println("Error al obtener ID usuario: " + e.getMessage());
+    }
+    return id;
+}
     
     
     

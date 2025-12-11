@@ -15,18 +15,29 @@ import javax.swing.JLabel;
  * @author jheff
  */
 public class Menu_Almacenero extends javax.swing.JFrame {
+private int idUsuarioSesion;
 
-
-    /**
-     * Creates new form NewJFrame
-     */
-    public Menu_Almacenero() {
+    public Menu_Almacenero(int idUsuario) { // Recibe el entero
         initComponents();
-       
+        this.idUsuarioSesion = idUsuario;
         setLocationRelativeTo(null); // Centra la ventana
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    public Menu_Almacenero() {
+        this(0); // ⚠️ pasa un idUsuario "dummy"
+    }
+    /**
+     * Creates new form NewJFrame
+     */
+
+
+    // Método para abrir la ventana Compras con el idUsuario
+    private void abrirCompras() {
+        Compras compras = new Compras(idUsuarioSesion); // ✅ pasamos el idUsuario
+        compras.setVisible(true);
+        this.add(compras); // lo agregamos al contenedor del menú
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

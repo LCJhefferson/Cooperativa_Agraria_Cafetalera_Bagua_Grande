@@ -21,6 +21,25 @@ import javax.swing.JComboBox;
 
 
 public class Compras extends javax.swing.JInternalFrame {
+    
+    // 1. Variable para guardar el ID del usuario que está comprando
+    private int idUsuarioSesion;
+
+    // 2. Modificar el Constructor para pedir el ID
+    // Borra 'public Compras() {' y pon este:
+    public Compras(int idUsuario) {
+        initComponents(); // Esto inicializa los componentes visuales
+        
+        this.idUsuarioSesion = idUsuario; // Guardamos el ID que nos manda el menú
+        
+        // (Opcional) Prueba en consola
+        System.out.println("Formulario Compras abierto por usuario ID: " + idUsuario);
+    }
+    
+    
+    
+    
+    
     private static Compras instancia;
 // Variables de estado en la clase Compras
     private int idCompraSeleccionada = -1;
@@ -365,6 +384,94 @@ public static Compras getInstancia(){
     }//GEN-LAST:event_txtPrecioActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+btnRegistrar.addActionListener(e -> {
+    try {
+        // 1. Obtener datos de la interfaz
+        String producto = String.valueOf(cbxProducto.getSelectedItem());
+        int idProducto = obtenerIdProducto(producto); // Método que ya tienes
+
+        double cantidadVal = Double.parseDouble(txtCantidad.getText());
+        double humedadVal = Double.parseDouble(txtHumedad.getText());
+        double precioVal = Double.parseDouble(txtPrecio.getText());
+        double rendimientoVal = Double.parseDouble(txtRendimiento.getText());      
+        String guia = txtGuia.getText();
+        String socio = txtSocio.getText(); 
+        
+        // Fecha actual
+        String fecha = java.time.LocalDateTime.now()
+            .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        // Validaciones básicas
+        if (guia.isEmpty() || txtCantidad.getText().isEmpty() || txtPrecio.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Por favor complete todos los campos obligatorios");
+            return;
+        }
+
+        // 2. Conectar y Guardar
+        try (Connection con = Conexion.getConexion()) {
+            
+            // OJO: Aquí obtenemos el ID del socio (debes tener este método o usar un combo)
+            // Por ahora uso 1 para probar, pero deberías usar: obtenerIdSocio(socio);
+            int idSocio = 1; 
+
+            String sql = "INSERT INTO compra (id_usuario, id_producto, cantidad, humedad, precio, rendimiento, guia_ingreso, id_socio, fecha_registro) " +
+                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+                // --- AQUÍ ESTABA EL ERROR DE ORDEN ---
+                
+                // 1. id_usuario: Usamos la variable que pasamos desde el Login
+                ps.setInt(1, this.idUsuarioSesion); 
+
+                // 2. id_producto
+                ps.setInt(2, idProducto);
+
+                // 3. cantidad
+                ps.setDouble(3, cantidadVal);
+
+                // 4. humedad
+                ps.setDouble(4, humedadVal);
+ 
+                // 5. precio
+                ps.setDouble(5, precioVal);
+
+                // 6. rendimiento
+                ps.setDouble(6, rendimientoVal);
+
+                // 7. guia_ingreso
+                ps.setString(7, guia);
+
+                // 8. id_socio
+                ps.setInt(8, idSocio);
+
+                // 9. fecha_registro
+                ps.setString(9, fecha);
+
+                // Ejecutar
+                ps.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Compra registrada correctamente.");
+            }
+        }
+
+        // 3. Actualizar la tabla visualmente
+        new TablaCompras().cargarDatos(tblCompras);
+
+        // 4. Limpiar campos
+        txtCantidad.setText("");
+        txtPrecio.setText("");
+        txtHumedad.setText("");
+        txtRendimiento.setText("");
+        txtGuia.setText("");
+        txtSocio.setText("");
+
+    } catch (NumberFormatException nfe) {
+        JOptionPane.showMessageDialog(null, "Error: Ingrese números válidos en cantidad/precio/etc.");
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error al registrar: " + ex.getMessage());
+    }
+});
 
     }//GEN-LAST:event_btnRegistrarActionPerformed
 

@@ -18,7 +18,18 @@ import javax.swing.JLabel;
  */
 public class Menu_Administrador extends javax.swing.JFrame {
 
+// 1. Crear una variable para guardar el ID en esta ventana
+    private int idUsuarioSesion;
 
+    // 2. Modificar el Constructor para que pida el ID
+    public Menu_Administrador(int idUsuario) {
+        initComponents();
+        
+        this.idUsuarioSesion = idUsuario; // Guardamos el ID recibido
+        
+        // Opcional: Probar que llegó bien
+        System.out.println("El Administrador entró con ID: " + this.idUsuarioSesion);
+    }
     /**
      * Creates new form NewJFrame
      */

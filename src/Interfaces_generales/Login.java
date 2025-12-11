@@ -117,7 +117,6 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
             }
         });
 
-        TxtTexto.setText("...");
         TxtTexto.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel5.setFont(new java.awt.Font("Yu Gothic Medium", 3, 14)); // NOI18N
@@ -179,8 +178,8 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(CbxTipoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(TxtTexto)
+                .addGap(27, 27, 27)
+                .addComponent(TxtTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BtnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -216,80 +215,71 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnIniciarActionPerformed
-    String usuario = TxtUsuario.getText().trim();
-    String contrasena = new String(TxtContraseña.getPassword()).trim();
-    String tipoSeleccionado = CbxTipoUsuario.getSelectedItem().toString();
+   String usuario = TxtUsuario.getText().trim();
+String contrasena = new String(TxtContraseña.getPassword()).trim();
+String tipoSeleccionado = CbxTipoUsuario.getSelectedItem().toString();
 
+if (usuario.isEmpty() || contrasena.isEmpty()) {
+    TxtTexto.setText("Debe ingresar un usuario y contraseña");
+    TxtTexto.setForeground(Color.RED);
+    return;
+}
 
+// Llamada al DAO real
+UsuarioDAO dao = new UsuarioDAO();
+int rol = dao.validarLogin(usuario, contrasena);
+int idUsuario = dao.obtenerIdUsuario(usuario); // ✅ obtenemos el ID real del usuario
 
-    if (usuario.isEmpty() || contrasena.isEmpty()) {
+if (rol == -1 || idUsuario == -1) {
+    TxtTexto.setText("Usuario o contraseña incorrectos");
+    TxtTexto.setForeground(Color.RED);
+    return;
+}
 
-        TxtTexto.setText("Debe ingresar un usuario y contraseña");
-        TxtTexto.setForeground(Color.RED);
+// Si llega aquí, el usuario existe
+TxtTexto.setText("");
+JOptionPane.showMessageDialog(this, "Bienvenido " + usuario);
 
-        return;
-    }
-    // Llamada al DAO real
-    UsuarioDAO dao = new UsuarioDAO();
-    int rol = dao.validarLogin(usuario, contrasena);
-    if (rol == -1) {
-
-        TxtTexto.setText("Usuario o contraseña incorrectos");
-        TxtTexto.setForeground(Color.RED);
-        return;
-
-    }
-    // Si llega aquí, el usuario existe
-
-    TxtTexto.setText("");
-    JOptionPane.showMessageDialog(this, "Bienvenido " + usuario);
-    // Validación de rol por BD
-
-  // ... validaciones anteriores de usuario y contraseña ...
-
-   switch (rol) {
-
-        case 1: // AHORA MASTER ES EL 1
-            // Usamos la variable constante ROL_SECRETO (o "      ")
-            if (!tipoSeleccionado.equals(TEXTO_SECRETO)) { 
-                TxtTexto.setText("Seleccione el rol correcto");
-                TxtTexto.setForeground(Color.RED);
-                return;
-            }
-            // Lógica de Master (entra al menú de Admin)
-            Interfaces_Administrador.Menu_Administrador adminMaster = new Interfaces_Administrador.Menu_Administrador();
-            adminMaster.setVisible(true);
-            this.dispose();
-            break;
-
-        case 2: // AHORA ADMINISTRADOR ES EL 2
-            if (!tipoSeleccionado.equals("Administrador")) {
-                TxtTexto.setText("Seleccione el rol correcto");
-                TxtTexto.setForeground(Color.RED);
-                return;
-            }
-            Interfaces_Administrador.Menu_Administrador admin = new Interfaces_Administrador.Menu_Administrador();
-            admin.setVisible(true);
-            this.dispose();
-            break;
-
-        case 3: // SUPONIENDO QUE ALMACENERO ES EL 3
-            if (!tipoSeleccionado.equals("Almacenero")) {
-                TxtTexto.setText("Seleccione el rol correcto");
-                TxtTexto.setForeground(Color.RED);
-                return;
-            }
-            Interfaces_Almacenero.Menu_Almacenero almacen = new Interfaces_Almacenero.Menu_Almacenero();
-            almacen.setVisible(true);
-            this.dispose();
-            break;
-
-        default:
-            TxtTexto.setText("Rol no reconocido");
+// Validación de rol por BD
+switch (rol) {
+    case 1: // Master
+        if (!tipoSeleccionado.equals(TEXTO_SECRETO)) { 
+            TxtTexto.setText("Seleccione el rol correcto");
             TxtTexto.setForeground(Color.RED);
-            break;
-    }
-    
+            return;
+        }
+        Interfaces_Administrador.Menu_Administrador adminMaster = new Interfaces_Administrador.Menu_Administrador(idUsuario); // ✅ pasamos idUsuario
+        adminMaster.setVisible(true);
+        this.dispose();
+        break;
+
+    case 2: // Administrador
+        if (!tipoSeleccionado.equals("Administrador")) {
+            TxtTexto.setText("Seleccione el rol correcto");
+            TxtTexto.setForeground(Color.RED);
+            return;
+        }
+        Interfaces_Administrador.Menu_Administrador admin = new Interfaces_Administrador.Menu_Administrador(idUsuario); // ✅ pasamos idUsuario
+        admin.setVisible(true);
+        this.dispose();
+        break;
+
+    case 3: // Almacenero
+        if (!tipoSeleccionado.equals("Almacenero")) {
+            TxtTexto.setText("Seleccione el rol correcto");
+            TxtTexto.setForeground(Color.RED);
+            return;
+        }
+        Interfaces_Almacenero.Menu_Almacenero almacen = new Interfaces_Almacenero.Menu_Almacenero(idUsuario); // ✅ pasamos idUsuario
+        almacen.setVisible(true);
+        this.dispose();
+        break;
+
+    default:
+        TxtTexto.setText("Rol no reconocido");
+        TxtTexto.setForeground(Color.RED);
+        break;
+}
 
     }//GEN-LAST:event_BtnIniciarActionPerformed
 
