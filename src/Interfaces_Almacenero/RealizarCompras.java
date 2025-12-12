@@ -8,19 +8,8 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import Conexion.Conexion; // Suponiendo esta ruta
 import Entidades.ITProducto; // Suponiendo esta ruta
 import Entidades.Sesion; // Suponiendo esta ruta
-
-///PDF
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+// Otras importaciones utilizadas en el método
+import javax.swing.JOptionPane;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,6 +41,8 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 /**
  *
  * @author jheff
@@ -229,7 +220,12 @@ private void verificarLongitudYBuscar() {
             }
         });
 
-        PdfPTable.setText("PDF");
+        PdfPTable.setText("Generar Comprobante");
+        PdfPTable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PdfPTableActionPerformed(evt);
+            }
+        });
 
         BtnModificar.setText("Modificar");
         BtnModificar.addActionListener(new java.awt.event.ActionListener() {
@@ -437,6 +433,10 @@ if (BtnRegistrar.getText().equals("GUARDAR CAMBIOS")) {
     private void BtnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnModificarActionPerformed
 iniciarProcesoModificacion();        // TODO add your handling code here:
     }//GEN-LAST:event_BtnModificarActionPerformed
+
+    private void PdfPTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PdfPTableActionPerformed
+exportarACSVConSelector();       // TODO add your handling code here:
+    }//GEN-LAST:event_PdfPTableActionPerformed
 
     
     private void cargarProductos() {
@@ -849,8 +849,9 @@ private void calcularPrecioTotal() {
 }
 
 private void habilitarModoEdicion() {
-    BtnRegistrar.setText("GUARDAR CAMBIOS");
-    BtnRegistrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/guardar.png"))); // opcional
+    try {
+        BtnRegistrar.setText("GUARDAR CAMBIOS");
+    BtnRegistrar.setIcon(null); 
     
     // Deshabilitar campos que no se deben modificar
     TxtDniSocio.setEnabled(false);
@@ -861,6 +862,9 @@ private void habilitarModoEdicion() {
     TxtPrecioCompra.setEnabled(true);
     
     BtnModificar.setEnabled(false);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
 }
 
 private void deshabilitarModoEdicion() {
@@ -1137,102 +1141,155 @@ private void eliminarCompra() {
     }
 }
 
-///////////////////////////PDF////////////////////////////////////
-private void generarGuiaPDF() {
+///////////////////////////EXCEL////////////////////////////////////
+
+private void exportarACSVConSelector() {
     int fila = TblCompras.getSelectedRow();
     if (fila == -1) {
-        JOptionPane.showMessageDialog(this, "Selecciona una compra para generar la guía", 
+        JOptionPane.showMessageDialog(this, "Selecciona una compra para guardar", 
                                     "Advertencia", JOptionPane.WARNING_MESSAGE);
         return;
     }
 
-    try {
-        String guia = TblCompras.getValueAt(fila, 1).toString();
-        String fecha = new SimpleDateFormat("dd/MM/yyyy HH:mm")
-                      .format(TblCompras.getValueAt(fila, 2));
-        String socio = TblCompras.getValueAt(fila, 3).toString();
-        String producto = TblCompras.getValueAt(fila, 4).toString();
-        double cantidad = (double) TblCompras.getValueAt(fila, 5);
-        String rendimiento = TblCompras.getValueAt(fila, 6).toString();
-        String humedad = TblCompras.getValueAt(fila, 7).toString();
-        double precio = (double) TblCompras.getValueAt(fila, 8);
-        double total = (double) TblCompras.getValueAt(fila, 9);
+    // === DATOS DE LA COMPRA ===
+    String guia      = TblCompras.getValueAt(fila, 1).toString();
+    String fecha     = new SimpleDateFormat("dd-MM-yyyy HHmm").format(TblCompras.getValueAt(fila, 2));
+    String socio     = TblCompras.getValueAt(fila, 3).toString();
+    String producto  = TblCompras.getValueAt(fila, 4).toString();
+    String cantidad  = TblCompras.getValueAt(fila, 5).toString();
+    String rendimiento = TblCompras.getValueAt(fila, 6).toString();
+    String humedad   = TblCompras.getValueAt(fila, 7).toString();
+    String precio    = TblCompras.getValueAt(fila, 8).toString();
+    String total     = TblCompras.getValueAt(fila, 9).toString();
 
-        String ruta = System.getProperty("user.home") + "/Desktop/GUIA_" + guia + ".pdf";
+    // === SELECTOR DE ARCHIVO ===
+    JFileChooser selector = new JFileChooser();
+    selector.setDialogTitle("Guardar Guía de Ingreso");
+    
+    // Nombre sugerido bonito
+    String nombreSugerido = "GUIA_" + guia + "_" + socio.replace(" ", "_") + "_" + fecha + ".csv";
+    selector.setSelectedFile(new File(nombreSugerido));
 
-        Document documento = new Document(PageSize.A4, 50, 50, 50, 50);
-        PdfWriter.getInstance(documento, new FileOutputStream(ruta));
-        documento.open();
+    // Solo archivos CSV
+    FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivo Excel/CSV (*.csv)", "csv");
+    selector.setFileFilter(filtro);
 
-        Font titulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
-        Font normal = FontFactory.getFont(FontFactory.HELVETICA, 12);
-        Font negrita = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
-        Font grande = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22);
+    int opcion = selector.showSaveDialog(this);
 
-        // Encabezado centrado
-        Paragraph p = new Paragraph("COOPERATIVA AGRARIA CAFÉ BAQUA GRANDE", titulo);
-        p.setAlignment(Element.ALIGN_CENTER);
-        documento.add(p);
+    if (opcion != JFileChooser.APPROVE_OPTION) {
+        return; // Canceló
+    }
 
-        p = new Paragraph("GUÍA DE INGRESO - Nº " + guia, grande);
-        p.setAlignment(Element.ALIGN_CENTER);
-        p.setSpacingBefore(10);
-        documento.add(p);
+    File archivo = selector.getSelectedFile();
 
-        p = new Paragraph("Fecha: " + fecha, normal);
-        p.setAlignment(Element.ALIGN_CENTER);
-        documento.add(p);
+    // Asegurar extensión .csv
+    if (!archivo.getName().toLowerCase().endsWith(".csv")) {
+        archivo = new File(archivo.getAbsolutePath() + ".csv");
+    }
 
-        documento.add(new Paragraph("\n"));
+    // Si ya existe, confirmar sobrescribir
+    if (archivo.exists()) {
+        int confirmar = JOptionPane.showConfirmDialog(this,
+            "El archivo ya existe.\n¿Deseas reemplazarlo?", "Confirmar",
+            JOptionPane.YES_NO_OPTION);
+        if (confirmar != JOptionPane.YES_OPTION) {
+            return;
+        }
+    }
 
-        // Tabla
-        PdfPTable tabla = new PdfPTable(2);
-        tabla.setWidthPercentage(90);
-        tabla.setWidths(new int[]{35, 65});
-
-        tabla.addCell(new PdfPCell(new Phrase("Socio:", negrita)));
-        tabla.addCell(new PdfPCell(new Phrase(socio, normal)));
-        tabla.addCell(new PdfPCell(new Phrase("Producto:", negrita)));
-        tabla.addCell(new PdfPCell(new Phrase(producto, normal)));
-        tabla.addCell(new PdfPCell(new Phrase("Cantidad:", negrita)));
-        tabla.addCell(new PdfPCell(new Phrase(cantidad + " qq", normal)));
-        tabla.addCell(new PdfPCell(new Phrase("Rendimiento:", negrita)));
-        tabla.addCell(new PdfPCell(new Phrase(rendimiento + " %", normal)));
-        tabla.addCell(new PdfPCell(new Phrase("Humedad:", negrita)));
-        tabla.addCell(new PdfPCell(new Phrase(humedad + " %", normal)));
-        tabla.addCell(new PdfPCell(new Phrase("Precio por qq:", negrita)));
-        tabla.addCell(new PdfPCell(new Phrase("S/ " + String.format("%.2f", precio), normal)));
-        tabla.addCell(new PdfPCell(new Phrase("TOTAL A PAGAR:", negrita)));
-        PdfPCell celdaTotal = new PdfPCell(new Phrase("S/ " + String.format("%.2f", total), 
-                                    FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16)));
-        celdaTotal.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        celdaTotal.setColspan(1);
-        tabla.addCell(celdaTotal);
-
-        documento.add(tabla);
-
-        // Firmas
-        documento.add(new Paragraph("\n\n\n"));
-        p = new Paragraph("_________________           _________________", normal);
-        p.setAlignment(Element.ALIGN_CENTER);
-        documento.add(p);
-        p = new Paragraph("    FIRMA SOCIO                       FIRMA ALMACENERO", normal);
-        p.setAlignment(Element.ALIGN_CENTER);
-        documento.add(p);
-
-        documento.close();
-
+    // === ESCRIBIR EL CSV ===
+    try (java.io.PrintWriter pw = new java.io.PrintWriter(archivo, "UTF-8")) {
+        pw.println("COOPERATIVA AGRARIA CAFÉ BAQUA GRANDE LTDA.");
+        pw.println("GUÍA DE INGRESO DE CAFÉ PERGAMINO");
+        pw.println("Nº " + guia);
+        pw.println("Fecha," + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(TblCompras.getValueAt(fila, 2)));
+        pw.println();
+        pw.println("CAMPO,VALOR");
+        pw.println("Socio," + socio);
+        pw.println("Producto," + producto);
+        pw.println("Cantidad (qq)," + cantidad);
+        pw.println("Rendimiento (%)," + rendimiento);
+        pw.println("Humedad (%)," + humedad);
+        pw.println("Precio por qq,S/ " + precio);
+        pw.println("TOTAL A PAGAR,S/ " + total);
+        pw.println();
+        pw.println("_________________,_________________");
+        pw.println("FIRMA DEL SOCIO,FIRMA ALMACENERO");
+        
         JOptionPane.showMessageDialog(this, 
-            "¡GUÍA GENERADA CORRECTAMENTE!\nGuardada en el Escritorio", 
-            "ÉXITO", JOptionPane.INFORMATION_MESSAGE);
+            "¡Guía guardada correctamente!\n" + archivo.getAbsolutePath(),
+            "Guardado", JOptionPane.INFORMATION_MESSAGE);
 
-        // ABRIR AUTOMÁTICAMENTE
-        Desktop.getDesktop().open(new File(ruta));
+        // Abrir automáticamente
+        Desktop.getDesktop().open(archivo);
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, 
-            "Error al generar PDF:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            "Error al guardar:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
+    }
+}
+/////////////desde Listar Compras/////////////////
+///
+///// MÉTODO PÚBLICO PARA CARGAR COMPRA DESDE LISTADO
+public void cargarCompraParaEditar(int idCompra) {
+    Connection cn = null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
+
+    try {
+        cn = Conexion.getConexion();
+        String sql = "SELECT c.*, s.nro_documento, s.nombre AS nombre_socio, p.nombre AS nombre_producto " +
+                     "FROM compra c " +
+                     "JOIN socio s ON c.id_socio = s.id " +
+                     "JOIN producto p ON c.id_producto = p.id " +
+                     "WHERE c.id = ?";
+
+        pst = cn.prepareStatement(sql);
+        pst.setInt(1, idCompra);
+        rs = pst.executeQuery();
+
+        if (rs.next()) {
+            this.idCompraAEditar = rs.getInt("id");
+
+            // Cargar socio
+            TxtDniSocio.setText(rs.getString("nro_documento"));
+            LblNombreSocio.setText(rs.getString("nombre_socio"));
+            this.socioIdEncontrado = rs.getInt("id_socio");
+
+            // Cargar producto
+            String nombreProducto = rs.getString("nombre_producto");
+            for (int i = 0; i < CbxProducto.getItemCount(); i++) {
+                ITProducto item = (ITProducto) CbxProducto.getItemAt(i);
+                if (item.getNombre().equals(nombreProducto)) {
+                    CbxProducto.setSelectedItem(item);
+                    break;
+                }
+            }
+
+            // Cargar campos
+            TxtCantidad.setText(String.valueOf(rs.getDouble("cantidad")));
+            TxtRendimiento.setText(String.valueOf(rs.getDouble("rendimiento")));
+            TxtHumedad.setText(String.valueOf(rs.getDouble("humedad")));
+            TxtPrecioCompra.setText(String.valueOf(rs.getDouble("precio")));
+
+            // Calcular total
+            calcularPrecioTotal();
+
+            // Cambiar a modo edición
+            habilitarModoEdicion();
+
+            JOptionPane.showMessageDialog(this, 
+                "Compra cargada para editar - Modifica y haz clic en GUARDAR CAMBIOS", 
+                "Modo Edición", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar compra: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        try { if (rs != null) rs.close(); if (pst != null) pst.close(); if (cn != null) cn.close(); }
+        catch (SQLException e) { e.printStackTrace(); }
     }
 }
 

@@ -250,8 +250,11 @@
             </Component>
             <Component class="javax.swing.JButton" name="PdfPTable">
               <Properties>
-                <Property name="text" type="java.lang.String" value="PDF"/>
+                <Property name="text" type="java.lang.String" value="Generar Comprobante"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="PdfPTableActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="BtnModificar">
               <Properties>
