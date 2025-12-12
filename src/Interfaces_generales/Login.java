@@ -14,6 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import Conexion.Conexion; // Asegúrate que este import coincida con tu paquete
+import Entidades.Sesion;
+import Interfaces_Administrador.Menu_Administrador;
 /**
  *
  * @author jheff
@@ -26,11 +28,7 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
      */
     public Login() {
         initComponents();
-        setLocationRelativeTo(null); // centra la ventana
-        
-        
-        // Agrega esta línea aquí para llamar al metodo cargar
-        //roles que llena el combo box con los datos de la bd:
+        setLocationRelativeTo(null); 
     cargarRoles();
     }
 
@@ -50,12 +48,12 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        CbxTipoUsuario = new javax.swing.JComboBox<>();
-        TxtUsuario = new javax.swing.JTextField();
+        cbxTipoUsuario = new javax.swing.JComboBox<>();
+        txtUsuario = new javax.swing.JTextField();
         BtnIniciar = new javax.swing.JButton();
         TxtTexto = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        TxtContraseña = new javax.swing.JPasswordField();
+        txtContraseña = new javax.swing.JPasswordField();
         jLabel6 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
@@ -94,15 +92,15 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Usuario o rol.png"))); // NOI18N
         jLabel3.setText("Rol");
 
-        CbxTipoUsuario.addActionListener(new java.awt.event.ActionListener() {
+        cbxTipoUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CbxTipoUsuarioActionPerformed(evt);
+                cbxTipoUsuarioActionPerformed(evt);
             }
         });
 
-        TxtUsuario.addActionListener(new java.awt.event.ActionListener() {
+        txtUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TxtUsuarioActionPerformed(evt);
+                txtUsuarioActionPerformed(evt);
             }
         });
 
@@ -139,10 +137,10 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(TxtUsuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtUsuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(TxtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(CbxTipoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(cbxTipoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(TxtTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(BtnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(53, 53, 53))
@@ -169,20 +167,20 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
                 .addGap(54, 54, 54)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(TxtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(TxtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(CbxTipoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addComponent(cbxTipoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(65, 65, 65)
                 .addComponent(TxtTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BtnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -190,14 +188,14 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 835, Short.MAX_VALUE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 709, Short.MAX_VALUE)
+            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -215,81 +213,103 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnIniciarActionPerformed
-   String usuario = TxtUsuario.getText().trim();
-String contrasena = new String(TxtContraseña.getPassword()).trim();
-String tipoSeleccionado = CbxTipoUsuario.getSelectedItem().toString();
+// 1. OBTENER DATOS DE LA INTERFAZ
+    String usuario = txtUsuario.getText().trim(); // Usuario
+    // NOTA: Si usas JPasswordField, usa getPassword() y conviértelo a String
+    String contrasenia = txtContraseña.getText().trim(); // Contraseña
+    String rolSeleccionado = cbxTipoUsuario.getSelectedItem().toString(); // Rol visible
 
-if (usuario.isEmpty() || contrasena.isEmpty()) {
-    TxtTexto.setText("Debe ingresar un usuario y contraseña");
-    TxtTexto.setForeground(Color.RED);
-    return;
+    // 2. MANEJAR EL ROL OCULTO (Mapeo de la Interfaz a la DB)
+    String rolDB = rolSeleccionado;
+    if (rolSeleccionado.equals(TEXTO_SECRETO)) { 
+        // Esta variable debe contener el valor real del rol "Master" para la consulta.
+        rolDB = "Master"; 
+    }
+
+    Connection cn = null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
+
+    try {
+        cn = Conexion.getConexion();
+        
+        // 3. CONSULTA DE VALIDACIÓN (Buscar el usuario ACTIVO con ese Rol y Contraseña)
+        String sql = "SELECT u.id, u.Usuario, u.id_rol, r.nombre AS Rol_Nombre " +
+                     "FROM usuarios u " +
+                     "JOIN roles r ON u.id_rol = r.id " +
+                     "WHERE u.Usuario = ? AND u.contraseña = ? AND r.nombre = ? AND u.estado = '1' LIMIT 1";
+
+        pst = cn.prepareStatement(sql);
+        pst.setString(1, usuario);
+        pst.setString(2, contrasenia);
+        pst.setString(3, rolDB);
+
+        rs = pst.executeQuery();
+
+        // ... [Paso 1, 2, 3: Obtener datos, Mapear Rol y Ejecutar Consulta SQL] ...
+
+if (rs.next()) {
+    // AUTENTICACIÓN EXITOSA
+
+    // 4. ESTABLECER LA SESIÓN EN MEMORIA (Clase Sesion)
+    Sesion.userId = rs.getInt("id");
+    Sesion.userNombre = rs.getString("Usuario");
+    Sesion.userRol = rs.getString("Rol_Nombre"); // Ejemplo: "Master", "Administrador", "Almacenero"
+    Sesion.rolId = rs.getInt("id_rol"); 
+    
+    // 5. REDIRECCIÓN CONDICIONAL BASADA EN EL ROL
+    String rolUsuario = Sesion.userRol;
+    
+    if (rolUsuario.equalsIgnoreCase("Administrador") || rolUsuario.equalsIgnoreCase("Master")) {
+        // Redirigir a la interfaz de Administrador (que incluye a Master)
+        Menu_Administrador menuAdmin = new Menu_Administrador(); 
+        menuAdmin.setVisible(true);
+        this.dispose(); // Cerrar la ventana de login
+        
+    } else if (rolUsuario.equalsIgnoreCase("Almacenero")) {
+        // Redirigir a la interfaz de Almacenero
+        Menu_Almacenero menuAlmac = new Menu_Almacenero();
+        menuAlmac.setVisible(true);
+        this.dispose(); // Cerrar la ventana de login
+        
+    } else {
+        // Manejar cualquier otro rol inesperado (o si el rol aún no tiene menú)
+        JOptionPane.showMessageDialog(null, "Rol de usuario no tiene un menú asignado.", "Error de Configuración", JOptionPane.WARNING_MESSAGE);
+        
+        // Limpiar la sesión por seguridad
+        Sesion.cerrarSesion();
+    }
+
+} else {
+    // Autenticación Fallida: mostrar mensaje de error.
+    JOptionPane.showMessageDialog(null, "Usuario, Contraseña o Rol incorrectos o usuario inactivo.", "Error de Login", JOptionPane.ERROR_MESSAGE);
+    txtContraseña.setText("");
 }
 
-// Llamada al DAO real
-UsuarioDAO dao = new UsuarioDAO();
-int rol = dao.validarLogin(usuario, contrasena);
-int idUsuario = dao.obtenerIdUsuario(usuario); // ✅ obtenemos el ID real del usuario
+// ... [Bloque finally para cerrar recursos] ...
 
-if (rol == -1 || idUsuario == -1) {
-    TxtTexto.setText("Usuario o contraseña incorrectos");
-    TxtTexto.setForeground(Color.RED);
-    return;
-}
-
-// Si llega aquí, el usuario existe
-TxtTexto.setText("");
-JOptionPane.showMessageDialog(this, "Bienvenido " + usuario);
-
-// Validación de rol por BD
-switch (rol) {
-    case 1: // Master
-        if (!tipoSeleccionado.equals(TEXTO_SECRETO)) { 
-            TxtTexto.setText("Seleccione el rol correcto");
-            TxtTexto.setForeground(Color.RED);
-            return;
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error en la conexión o consulta de Login: " + e.getMessage());
+    } finally {
+        // Asegurar el cierre de recursos
+        try {
+            if (rs != null) rs.close();
+            if (pst != null) pst.close();
+            if (cn != null) cn.close();
+        } catch (SQLException ex) {
+            System.out.println("Error al cerrar recursos: " + ex.getMessage());
         }
-        Interfaces_Administrador.Menu_Administrador adminMaster = new Interfaces_Administrador.Menu_Administrador(idUsuario); // ✅ pasamos idUsuario
-        adminMaster.setVisible(true);
-        this.dispose();
-        break;
-
-    case 2: // Administrador
-        if (!tipoSeleccionado.equals("Administrador")) {
-            TxtTexto.setText("Seleccione el rol correcto");
-            TxtTexto.setForeground(Color.RED);
-            return;
-        }
-        Interfaces_Administrador.Menu_Administrador admin = new Interfaces_Administrador.Menu_Administrador(idUsuario); // ✅ pasamos idUsuario
-        admin.setVisible(true);
-        this.dispose();
-        break;
-
-    case 3: // Almacenero
-        if (!tipoSeleccionado.equals("Almacenero")) {
-            TxtTexto.setText("Seleccione el rol correcto");
-            TxtTexto.setForeground(Color.RED);
-            return;
-        }
-        Interfaces_Almacenero.Menu_Almacenero almacen = new Interfaces_Almacenero.Menu_Almacenero(idUsuario); // ✅ pasamos idUsuario
-        almacen.setVisible(true);
-        this.dispose();
-        break;
-
-    default:
-        TxtTexto.setText("Rol no reconocido");
-        TxtTexto.setForeground(Color.RED);
-        break;
-}
+    }
 
     }//GEN-LAST:event_BtnIniciarActionPerformed
 
-    private void TxtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtUsuarioActionPerformed
+    private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_TxtUsuarioActionPerformed
+    }//GEN-LAST:event_txtUsuarioActionPerformed
 
-    private void CbxTipoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CbxTipoUsuarioActionPerformed
+    private void cbxTipoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxTipoUsuarioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_CbxTipoUsuarioActionPerformed
+    }//GEN-LAST:event_cbxTipoUsuarioActionPerformed
 
     
     /**
@@ -338,16 +358,16 @@ private void cargarRoles() {
         PreparedStatement pst = cn.prepareStatement(sql);
         ResultSet rs = pst.executeQuery();
 
-        CbxTipoUsuario.removeAllItems();
+        cbxTipoUsuario.removeAllItems();
 
         while (rs.next()) {
             String nombreRol = rs.getString("nombre");
             
             if (nombreRol.equalsIgnoreCase("Master")) {
                 // USAMOS LA VARIABLE AQUÍ
-                CbxTipoUsuario.addItem(TEXTO_SECRETO); 
+                cbxTipoUsuario.addItem(TEXTO_SECRETO); 
             } else {
-                CbxTipoUsuario.addItem(nombreRol);
+                cbxTipoUsuario.addItem(nombreRol);
             }
         }
         
@@ -359,10 +379,8 @@ private void cargarRoles() {
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnIniciar;
-    private javax.swing.JComboBox<String> CbxTipoUsuario;
-    private javax.swing.JPasswordField TxtContraseña;
     private javax.swing.JLabel TxtTexto;
-    private javax.swing.JTextField TxtUsuario;
+    private javax.swing.JComboBox<String> cbxTipoUsuario;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -372,5 +390,7 @@ private void cargarRoles() {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPasswordField txtContraseña;
+    private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }

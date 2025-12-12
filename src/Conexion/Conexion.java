@@ -6,28 +6,39 @@ import java.sql.SQLException;
 
 public class Conexion {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/cooperativa_cafetalera";
+    private static final String URL = "jdbc:mysql://localhost:3306/cooperativa_cafetalera"
+            + "?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+
     private static final String USER = "root";
     private static final String PASS = "";
 
-    private static Connection conn;
-
+    // ¡NUNCA MÁS CONEXIÓN ESTÁTICA!
+    // Cada vez que se llame getConexion() → devuelve una conexión NUEVA
     public static Connection getConexion() {
         try {
-            // Cargar driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            if (conn == null || conn.isClosed()) {
-                conn = DriverManager.getConnection(URL, USER, PASS);
-                System.out.println("conexion exitosa");
-            }
-
+            Connection nuevaConexion = DriverManager.getConnection(URL, USER, PASS);
+            System.out.println("Conexión exitosa (nueva conexión creada)");
+            return nuevaConexion;
         } catch (ClassNotFoundException e) {
-            System.out.println("ERROR: Driver MySQL no encontrado → " + e.getMessage());
+            System.err.println("ERROR: Driver MySQL no encontrado → " + e.getMessage());
+            e.printStackTrace();
+            return null;
         } catch (SQLException e) {
-            System.out.println("ERROR al conectar a MySQL → " + e.getMessage());
+            System.err.println("ERROR al conectar a MySQL → " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
+    }
 
-        return conn;
+    // Método opcional para cerrar conexión (útil si quieres cerrarla manualmente)
+    public static void cerrarConexion(Connection cn) {
+        if (cn != null) {
+            try {
+                cn.close();
+            } catch (SQLException e) {
+                System.err.println("Error al cerrar conexión: " + e.getMessage());
+            }
+        }
     }
 }

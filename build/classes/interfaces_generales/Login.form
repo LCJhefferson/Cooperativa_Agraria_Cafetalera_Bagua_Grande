@@ -64,7 +64,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="jLabel4" pref="835" max="32767" attributes="0"/>
+                  <Component id="jLabel4" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel2" min="-2" pref="359" max="-2" attributes="0"/>
               </Group>
@@ -73,7 +73,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="jPanel2" max="32767" attributes="0"/>
-              <Component id="jLabel4" alignment="0" pref="709" max="32767" attributes="0"/>
+              <Component id="jLabel4" alignment="0" pref="535" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -104,10 +104,10 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="TxtUsuario" alignment="1" min="-2" pref="270" max="-2" attributes="0"/>
+                                          <Component id="txtUsuario" alignment="1" min="-2" pref="270" max="-2" attributes="0"/>
                                           <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                                              <Component id="TxtContraseña" min="-2" pref="270" max="-2" attributes="0"/>
-                                              <Component id="CbxTipoUsuario" min="-2" pref="270" max="-2" attributes="0"/>
+                                              <Component id="txtContraseña" min="-2" pref="270" max="-2" attributes="0"/>
+                                              <Component id="cbxTipoUsuario" min="-2" pref="270" max="-2" attributes="0"/>
                                               <Component id="TxtTexto" alignment="0" min="-2" pref="250" max="-2" attributes="0"/>
                                               <Component id="BtnIniciar" alignment="0" min="-2" pref="270" max="-2" attributes="0"/>
                                           </Group>
@@ -146,20 +146,20 @@
                       <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="TxtUsuario" min="-2" pref="32" max="-2" attributes="0"/>
+                      <Component id="txtUsuario" min="-2" pref="32" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="TxtContraseña" min="-2" pref="32" max="-2" attributes="0"/>
+                      <Component id="txtContraseña" min="-2" pref="32" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="CbxTipoUsuario" min="-2" pref="32" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      <Component id="cbxTipoUsuario" min="-2" pref="32" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
                       <Component id="TxtTexto" min="-2" pref="20" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BtnIniciar" min="-2" pref="32" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="20" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -201,22 +201,22 @@
                 <Property name="text" type="java.lang.String" value="Rol"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="CbxTipoUsuario">
+            <Component class="javax.swing.JComboBox" name="cbxTipoUsuario">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="0"/>
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CbxTipoUsuarioActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbxTipoUsuarioActionPerformed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JTextField" name="TxtUsuario">
+            <Component class="javax.swing.JTextField" name="txtUsuario">
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TxtUsuarioActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtUsuarioActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="BtnIniciar">
@@ -259,7 +259,7 @@
                 <Property name="text" type="java.lang.String" value="COOPERATIVA AGRARIA CAFETALERA"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JPasswordField" name="TxtContrase&#xf1;a">
+            <Component class="javax.swing.JPasswordField" name="txtContrase&#xf1;a">
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
               <Properties>

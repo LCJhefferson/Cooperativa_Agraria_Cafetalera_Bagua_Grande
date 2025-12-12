@@ -4,10 +4,7 @@
  */
 package Interfaces_Administrador;
 
-import Interfaces_Almacenero.Compras;
-import Interfaces_Almacenero.Lista_Compras;
-import Interfaces_Almacenero.Lista_Ventas;
-import Interfaces_Almacenero.Salidas;
+
 import Interfaces_generales.Login;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,18 +15,6 @@ import javax.swing.JLabel;
  */
 public class Menu_Administrador extends javax.swing.JFrame {
 
-// 1. Crear una variable para guardar el ID en esta ventana
-    private int idUsuarioSesion;
-
-    // 2. Modificar el Constructor para que pida el ID
-    public Menu_Administrador(int idUsuario) {
-        initComponents();
-        
-        this.idUsuarioSesion = idUsuario; // Guardamos el ID recibido
-        
-        // Opcional: Probar que llegó bien
-        System.out.println("El Administrador entró con ID: " + this.idUsuarioSesion);
-    }
     /**
      * Creates new form NewJFrame
      */
@@ -391,37 +376,17 @@ public class Menu_Administrador extends javax.swing.JFrame {
     }//GEN-LAST:event_BTClienteActionPerformed
 
     private void JBT_RegistrarCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBT_RegistrarCompraActionPerformed
-Compras jif = Compras.getInstancia();
-    if( jif.isVisible()){
-        jif.toFront();
-    }else{
-       Principal.add(jif);
-        jif.setVisible(true);
-    }
+
 actualizarNavegacion("Registrar Compras", "Registrar Compras");
     }//GEN-LAST:event_JBT_RegistrarCompraActionPerformed
 
     private void BTNSalidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNSalidasActionPerformed
-        Salidas jif = Salidas.getInstancia();
-    if( jif.isVisible()){
-        jif.toFront();
-    }else{
-       Principal.add(jif);
-        jif.setVisible(true);
-    }
-    
+
 actualizarNavegacion("Registrar Salidas", "Registrar Salidas");
     }//GEN-LAST:event_BTNSalidasActionPerformed
 
     private void ListaComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaComprasActionPerformed
-                Lista_Compras jif = Lista_Compras.getInstancia();
-    if( jif.isVisible()){
-        jif.toFront();
-    }else{
-       Principal.add(jif);
-        jif.setVisible(true);
-    }
-    
+ 
 actualizarNavegacion("Lista de Compras", "Lista de Compras");
     }//GEN-LAST:event_ListaComprasActionPerformed
 
@@ -430,14 +395,7 @@ actualizarNavegacion("Lista de Compras", "Lista de Compras");
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void ListaVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaVentasActionPerformed
-              Lista_Ventas jif = Lista_Ventas.getInstancia();
-    if( jif.isVisible()){
-        jif.toFront();
-    }else{
-       Principal.add(jif);
-        jif.setVisible(true);
-    }
-    
+
 actualizarNavegacion("Lista de salidad", "Lista de salidad");
     }//GEN-LAST:event_ListaVentasActionPerformed
 
@@ -495,23 +453,7 @@ actualizarNavegacion("Lista de salidad", "Lista de salidad");
             java.util.logging.Logger.getLogger(Menu_Administrador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
+          /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Menu_Administrador().setVisible(true);
