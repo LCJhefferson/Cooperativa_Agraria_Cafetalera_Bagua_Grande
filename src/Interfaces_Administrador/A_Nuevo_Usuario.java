@@ -431,7 +431,7 @@ try {
         cn.setAutoCommit(false); // Iniciar transacción
         
         ItemRol rol = (ItemRol) cbxRol.getSelectedItem();
-        String contrasenaHash = hashPassword(String.valueOf(txtContrasena.getPassword()));
+        String contrasenaHash = txtContrasena.getText().trim(); 
         
         // Asumiremos que tiene un JTextField llamado txtNroDocumento
         String nroDocumento = txtNroDocumento.getText().trim(); 
@@ -557,6 +557,8 @@ private void cargarTablaUsuarios() {
     }
 }
 
+
+/*
 // HASH DE CONTRASEÑA (SHA-256)
     private String hashPassword(String password) {
         try {
@@ -567,6 +569,11 @@ private void cargarTablaUsuarios() {
             return password; // fallback (no recomendado)
         }
     }
+
+
+*/
+
+
 
     // VERIFICAR SI USUARIO EXISTE
     private boolean usuarioExiste(String usuario) {
@@ -730,11 +737,11 @@ private void cargarTablaUsuarios() {
         
         if (!contrasena.isEmpty()) {
             // Si el campo de contraseña no está vacío, la actualizamos (con hash)
-            String contrasenaHash = hashPassword(contrasena);
+            
             // CORRECCIÓN: Usar 'contraseña' como columna en la DB
             sqlUser = "UPDATE usuarios SET contraseña=?, id_rol=? WHERE id=?";
             pstUser = cn.prepareStatement(sqlUser);
-            pstUser.setString(1, contrasenaHash);
+            pstUser.setString(1, contrasena);
             pstUser.setInt(2, rol.getId());
             pstUser.setInt(3, idUsuarioSeleccionado);
         } else {
