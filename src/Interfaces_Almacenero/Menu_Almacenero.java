@@ -400,7 +400,32 @@ actualizarNavegacion("Registrar Compras", "Registrar Compras");
     }//GEN-LAST:event_JBT_RegistrarCompraActionPerformed
 
     private void BTNSalidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNSalidasActionPerformed
+RealizarSalida jif = RealizarSalida.getInstancia(); // 1. Obtener la instancia
+    
+    // ** 2. Manejo de la adición al escritorio (Solo si no ha sido agregada) **
+    if (jif.getParent() == null) {
+        Principal.add(jif); // Asumiendo que 'Principal' es el JDesktopPane
+        jif.setVisible(true);
+    }
+    
+    // ** 3. Manejo de estados (Iconizada/Frente) **
+    try {
+        // Restaurar si está minimizada
+        if (jif.isIcon()) { 
+            jif.setIcon(false); 
+        }
+        
+        // Asegurar que esté visible (útil si fue oculta con setVisible(false))
+        jif.setVisible(true); 
+        jif.setMaximum(true);
+        // Traer al frente (el más importante si ya estaba abierta)
+        jif.setSelected(true); 
+  
 
+    } catch (java.beans.PropertyVetoException ex) {
+        // Capturar excepción si el Look and Feel prohíbe el cambio de estado
+        ex.printStackTrace();
+    }
 actualizarNavegacion("Registrar Salidas", "Registrar Salidas");
     }//GEN-LAST:event_BTNSalidasActionPerformed
 
@@ -440,7 +465,33 @@ actualizarNavegacion("Lista de Compras", "Lista de Compras");
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void ListaVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaVentasActionPerformed
+   ListarSalidas jif = ListarSalidas.getInstancia(); // 1. Obtener la instancia
+    
+    // ** 2. Manejo de la adición al escritorio (Solo si no ha sido agregada) **
+    if (jif.getParent() == null) {
+        Principal.add(jif); // Asumiendo que 'Principal' es el JDesktopPane
+        jif.setVisible(true);
+    }
+    
+    // ** 3. Manejo de estados (Iconizada/Frente) **
+    try {
+        // Restaurar si está minimizada
+        if (jif.isIcon()) { 
+            jif.setIcon(false); 
+        }
+        
+        // Asegurar que esté visible (útil si fue oculta con setVisible(false))
+        jif.setVisible(true); 
+        jif.setMaximum(true);
+        // Traer al frente (el más importante si ya estaba abierta)
+        jif.setSelected(true); 
   
+
+    } catch (java.beans.PropertyVetoException ex) {
+        // Capturar excepción si el Look and Feel prohíbe el cambio de estado
+        ex.printStackTrace();
+    }
+    
 actualizarNavegacion("Lista de salidad", "Lista de salidad");
     }//GEN-LAST:event_ListaVentasActionPerformed
 

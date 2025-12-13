@@ -4,19 +4,72 @@
  */
 package Interfaces_Almacenero;
 
+import Conexion.Conexion;
+import Entidades.ITProducto;
+import Entidades.Sesion;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.PrintWriter;
+import java.sql.*;
+import java.util.Date;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.text.SimpleDateFormat;
 /**
  *
  * @author jheff
  */
 public class RealizarSalida extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form RealizarSalida
-     */
+    private static RealizarSalida instancia;
+  private int idSalidaAEditar = 0;
+
     public RealizarSalida() {
         initComponents();
+    configurarVentana();
+    cargarProductos();
+    cargarTodasLasSalidas();  // ← Carga la tabla al abrir
+    configurarTabla();
+       
     }
 
+    public static RealizarSalida getInstancia() {
+        if (instancia == null || instancia.isClosed()) {
+            instancia = new RealizarSalida();
+        }
+        return instancia;
+    }
+
+   // === CONFIGURAR TABLA (oculta ID) ===
+private void configurarTabla() {
+    if (tblSalidas.getColumnCount() > 0) {
+        tblSalidas.getColumnModel().getColumn(0).setMinWidth(0);
+        tblSalidas.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblSalidas.getColumnModel().getColumn(0).setWidth(0);
+    }
+}
+
+private void configurarVentana() {
+    this.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+    ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+}
+
+private void cargarProductos() {
+    cbxProducto.removeAllItems();
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement(
+             "SELECT id, nombre, stock FROM producto WHERE stock > 0 ORDER BY nombre")) {
+        ResultSet rs = pst.executeQuery();
+        while (rs.next()) {
+            cbxProducto.addItem(new ITProducto(
+                rs.getInt("id"),
+                rs.getString("nombre") + " (Stock: " + rs.getDouble("stock") + " qq)"
+            ));
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar productos");
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,21 +79,663 @@ public class RealizarSalida extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtObservaciones = new javax.swing.JTextArea();
+        cbxProducto = new javax.swing.JComboBox<>();
+        txtCantidad = new javax.swing.JTextField();
+        txtNumeroOrden = new javax.swing.JTextField();
+        txtDestino = new javax.swing.JTextField();
+        btnRegistrarSalida = new javax.swing.JButton();
+        btnGenerarComprobante = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblSalidas = new javax.swing.JTable();
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setText("Producto");
+
+        jLabel2.setText("Cantidad");
+
+        jLabel3.setText("Numero de orden ");
+
+        jLabel4.setText("Destino");
+
+        jLabel5.setText("Observaciones");
+
+        txtObservaciones.setColumns(20);
+        txtObservaciones.setRows(5);
+        jScrollPane2.setViewportView(txtObservaciones);
+
+        txtCantidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCantidadActionPerformed(evt);
+            }
+        });
+
+        txtDestino.setText("Planta de Procesamineto ");
+        txtDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDestinoActionPerformed(evt);
+            }
+        });
+
+        btnRegistrarSalida.setText("Reguistrar Salida");
+        btnRegistrarSalida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarSalidaActionPerformed(evt);
+            }
+        });
+
+        btnGenerarComprobante.setText("Generar Comprobante");
+        btnGenerarComprobante.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarComprobanteActionPerformed(evt);
+            }
+        });
+
+        btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
+
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(cbxProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtNumeroOrden, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel5))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                            .addComponent(btnRegistrarSalida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnGenerarComprobante, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnModificar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(46, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(58, 58, 58)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbxProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtNumeroOrden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(53, 53, 53)
+                .addComponent(btnRegistrarSalida)
+                .addGap(52, 52, 52)
+                .addComponent(btnGenerarComprobante)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnModificar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnEliminar)
+                .addContainerGap(153, Short.MAX_VALUE))
+        );
+
+        tblSalidas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblSalidas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblSalidasMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblSalidas);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 708, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 394, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 274, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txtDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDestinoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDestinoActionPerformed
 
+    private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCantidadActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+int fila = tblSalidas.getSelectedRow();
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Selecciona una salida para eliminar");
+        return;
+    }
+
+    if (JOptionPane.showConfirmDialog(this, 
+        "¿Eliminar esta salida permanentemente?\nSe restaurará el stock.", 
+        "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        
+        int idSalida = (int) tblSalidas.getValueAt(fila, 0);
+        int idProducto = obtenerIdProductoDesdeSalida(idSalida);
+        double cantidad = (double) tblSalidas.getValueAt(fila, 3);
+
+        try (Connection cn = Conexion.getConexion();
+             PreparedStatement pst = cn.prepareStatement("DELETE FROM salida WHERE id = ?")) {
+            pst.setInt(1, idSalida);
+            pst.executeUpdate();
+
+            // Restaurar stock
+            actualizarStock(idProducto, +cantidad);
+
+            JOptionPane.showMessageDialog(this, "Salida eliminada y stock restaurado");
+            cargarTodasLasSalidas();
+            limpiarCampos();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }
+
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnGenerarComprobanteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarComprobanteActionPerformed
+generarComprobanteCSV();
+    }//GEN-LAST:event_btnGenerarComprobanteActionPerformed
+
+    private void btnRegistrarSalidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarSalidaActionPerformed
+if (idSalidaAEditar > 0) {
+        actualizarSalida();
+    } else {
+        registrarNuevaSalida();
+    }
+    }//GEN-LAST:event_btnRegistrarSalidaActionPerformed
+
+    private void tblSalidasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSalidasMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblSalidasMouseClicked
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+int fila = tblSalidas.getSelectedRow();
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Selecciona una salida para modificar", 
+                                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int idSalida = (int) tblSalidas.getValueAt(fila, 0);
+    cargarSalidaParaEditar(idSalida);
+    }//GEN-LAST:event_btnModificarActionPerformed
+   
+    
+    
+    
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnGenerarComprobante;
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnRegistrarSalida;
+    private javax.swing.JComboBox<Entidades.ITProducto> cbxProducto;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tblSalidas;
+    private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextField txtDestino;
+    private javax.swing.JTextField txtNumeroOrden;
+    private javax.swing.JTextArea txtObservaciones;
     // End of variables declaration//GEN-END:variables
+
+    // === CARGAR TODAS LAS SALIDAS EN LA TABLA LOCAL ===
+private void cargarTodasLasSalidas() {
+    String[] titulos = {"ID", "Fecha", "Producto", "Cantidad", "N° Orden", "Destino", "Observaciones", "Usuario"};
+    DefaultTableModel modelo = new DefaultTableModel(null, titulos) {
+        @Override
+        public boolean isCellEditable(int row, int column) { return false; }
+    };
+    tblSalidas.setModel(modelo);
+
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement(
+             "SELECT s.id, s.fecha_salida, p.nombre AS producto, s.cantidad_salida, s.numero_orden, " +
+             "s.destino, s.observaciones, u.usuario " +
+             "FROM salida s " +
+             "JOIN producto p ON s.id_producto = p.id " +
+             "JOIN usuarios u ON s.id_usuario = u.id " +
+             "ORDER BY s.fecha_salida DESC")) {
+
+        ResultSet rs = pst.executeQuery();
+        while (rs.next()) {
+            Object[] fila = {
+                rs.getInt("id"),
+                new SimpleDateFormat("dd/MM/yyyy HH:mm").format(rs.getTimestamp("fecha_salida")),
+                rs.getString("producto"),
+                rs.getDouble("cantidad_salida"),
+                rs.getString("numero_orden"),
+                rs.getString("destino"),
+                rs.getString("observaciones"),
+                rs.getString("usuario")
+            };
+            modelo.addRow(fila);
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar salidas: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+    
+    // === REGISTRAR NUEVA SALIDA ===
+private void registrarNuevaSalida() {
+    try {
+        ITProducto item = (ITProducto) cbxProducto.getSelectedItem();
+        double cantidad = Double.parseDouble(txtCantidad.getText().trim());
+
+        if (item == null) throw new Exception("Selecciona un producto");
+        if (cantidad <= 0) throw new Exception("Cantidad inválida");
+        if (cantidad > obtenerStock(item.getId())) throw new Exception("Stock insuficiente");
+
+        try (Connection cn = Conexion.getConexion()) {
+            cn.setAutoCommit(false);
+
+            String sql = "INSERT INTO salida (id_producto, cantidad_salida, numero_orden, destino, observaciones, id_usuario) VALUES (?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement pst = cn.prepareStatement(sql)) {
+                pst.setInt(1, item.getId());
+                pst.setDouble(2, cantidad);
+                pst.setString(3, txtNumeroOrden.getText());
+                pst.setString(4, txtDestino.getText());
+                pst.setString(5, txtObservaciones.getText());
+                pst.setInt(6, Sesion.userId);
+                pst.executeUpdate();
+            }
+
+            cn.commit();
+            JOptionPane.showMessageDialog(this, "¡Salida registrada correctamente!");
+            limpiarCampos();
+            cargarProductos();
+            cargarTodasLasSalidas(); // ← ACTUALIZA LA TABLA
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error SQL: " + e.getMessage());
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+    
+    // === ACTUALIZAR SALIDA ===
+private void actualizarSalida() {
+    if (idSalidaAEditar == 0) return;
+
+    try {
+        ITProducto item = (ITProducto) cbxProducto.getSelectedItem();
+        double nuevaCant = Double.parseDouble(txtCantidad.getText().trim());
+        double viejaCant = obtenerCantidadAnterior(idSalidaAEditar);
+        double diferencia = nuevaCant - viejaCant;
+
+        if (nuevaCant <= 0) throw new Exception("Cantidad inválida");
+        if (diferencia > obtenerStock(item.getId()) + viejaCant) throw new Exception("Stock insuficiente");
+
+        try (Connection cn = Conexion.getConexion()) {
+            cn.setAutoCommit(false);
+
+            String sql = "UPDATE salida SET id_producto=?, cantidad_salida=?, numero_orden=?, destino=?, observaciones=? WHERE id=?";
+            try (PreparedStatement pst = cn.prepareStatement(sql)) {
+                pst.setInt(1, item.getId());
+                pst.setDouble(2, nuevaCant);
+                pst.setString(3, txtNumeroOrden.getText());
+                pst.setString(4, txtDestino.getText());
+                pst.setString(5, txtObservaciones.getText());
+                pst.setInt(6, idSalidaAEditar);
+                pst.executeUpdate();
+            }
+
+            cn.commit();
+            JOptionPane.showMessageDialog(this, "¡Salida actualizada!");
+            limpiarCampos();
+            cargarProductos();
+            cargarTodasLasSalidas(); // ← ACTUALIZA LA TABLA
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+}
+    
+    
+    
+    // BOTÓN GENERAR COMPROBANTE (conecta al evento del botón)
+
+// MÉTODO PARA GENERAR COMPROBANTE CSV (solo la salida seleccionada o la actual)
+private void generarComprobanteCSV() {
+    // Si hay una salida seleccionada en la tabla, usarla. Si no, usar los campos del formulario.
+    String numeroOrden = "";
+    String fecha = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date());
+    String producto = "";
+    String cantidad = "";
+    String destino = txtDestino.getText().trim();
+    String observaciones = txtObservaciones.getText().trim();
+
+    int fila = tblSalidas.getSelectedRow();
+    if (fila != -1) {
+        numeroOrden = tblSalidas.getValueAt(fila, 4).toString(); // N° Orden
+        fecha = tblSalidas.getValueAt(fila, 1).toString();       // Fecha
+        producto = tblSalidas.getValueAt(fila, 2).toString();    // Producto
+        cantidad = tblSalidas.getValueAt(fila, 3).toString();    // Cantidad
+    } else {
+        // Usar los campos del formulario si no hay selección
+        if (cbxProducto.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona un producto o una salida de la tabla");
+            return;
+        }
+        ITProducto item = (ITProducto) cbxProducto.getSelectedItem();
+        producto = item.getNombre().split(" \\(")[0]; // Quita el "(Stock: ...)"
+        numeroOrden = txtNumeroOrden.getText().trim();
+        cantidad = txtCantidad.getText().trim();
+        if (cantidad.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingresa la cantidad");
+            return;
+        }
+    }
+
+    // Selector de ruta
+    JFileChooser selector = new JFileChooser();
+    selector.setDialogTitle("Guardar Comprobante de Salida");
+    String nombreSugerido = "Comprobante_Salida_" + (numeroOrden.isEmpty() ? "TEMP" : numeroOrden) + ".csv";
+    selector.setSelectedFile(new File(nombreSugerido));
+
+    int opcion = selector.showSaveDialog(this);
+    if (opcion != JFileChooser.APPROVE_OPTION) {
+        return; // Canceló
+    }
+
+    File archivo = selector.getSelectedFile();
+    if (!archivo.getName().toLowerCase().endsWith(".csv")) {
+        archivo = new File(archivo.getAbsolutePath() + ".csv");
+    }
+
+    // Confirmar sobrescritura
+    if (archivo.exists()) {
+        int confirmar = JOptionPane.showConfirmDialog(this, 
+            "El archivo ya existe. ¿Reemplazar?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (confirmar != JOptionPane.YES_OPTION) return;
+    }
+
+    // Generar CSV
+    try (PrintWriter pw = new PrintWriter(archivo, "UTF-8")) {
+        pw.println("COOPERATIVA AGRARIA CAFÉ BAQUA GRANDE LTDA.");
+        pw.println("COMPROBANTE DE SALIDA DE CAFÉ");
+        pw.println();
+        pw.println("N° Orden:," + numeroOrden);
+        pw.println("Fecha:," + fecha);
+        pw.println("Producto:," + producto);
+        pw.println("Cantidad:," + cantidad + " qq");
+        pw.println("Destino:," + destino);
+        pw.println("Observaciones:," + observaciones.replace("\n", " "));
+        pw.println();
+        pw.println("_________________,_________________");
+        pw.println("ENTREGÓ (Almacén),RECIBIÓ (Planta)");
+
+        JOptionPane.showMessageDialog(this, 
+            "¡Comprobante generado correctamente!\nGuardado en:\n" + archivo.getAbsolutePath(),
+            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        // Abrir automáticamente
+        Desktop.getDesktop().open(archivo);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al generar comprobante: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    // MÉTODOS AUXILIARES COMPLETOS
+
+// 1. Obtener cantidad anterior (para modificar)
+private double obtenerCantidadAnterior(int idSalida) {
+    String sql = "SELECT cantidad_salida FROM salida WHERE id = ?";
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement(sql)) {
+        pst.setInt(1, idSalida);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            return rs.getDouble("cant");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return 0;
+}
+
+// 2. Obtener stock actual de un producto
+private double obtenerStock(int idProducto) {
+    String sql = "SELECT stock FROM producto WHERE id = ?";
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement(sql)) {
+        pst.setInt(1, idProducto);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            return rs.getDouble("stock");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return 0;
+}
+
+// 3. Actualizar stock (usado en registrar, modificar y eliminar)
+private void actualizarStock(int idProducto, double diferencia) {
+    String sql = "UPDATE producto SET stock = stock + ? WHERE id = ?";
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement(sql)) {
+        pst.setDouble(1, diferencia);
+        pst.setInt(2, idProducto);
+        pst.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+// 4. Limpiar campos y resetear formulario
+private void limpiarCampos() {
+    cbxProducto.setSelectedIndex(0);
+    txtCantidad.setText("");
+    txtNumeroOrden.setText("");
+    txtDestino.setText("Planta de Procesamiento");
+    txtObservaciones.setText("");
+    idSalidaAEditar = 0;
+    btnRegistrarSalida.setText("Registrar Salida");
+    btnGenerarComprobante.setEnabled(true);
+}
+
+// 5. Cargar salida para editar desde la tabla
+private void cargarSalidaDesdeTabla() {
+    int fila = tblSalidas.getSelectedRow();
+    if (fila == -1) return;
+
+    int idSalida = (int) tblSalidas.getValueAt(fila, 0);
+    cargarSalidaParaEditar(idSalida);
+}
+
+// 6. Método público para cargar salida desde otro formulario (ListarSalidas)
+public void cargarSalidaParaEditar(int idSalida) {
+    String sql = "SELECT s.*, p.nombre AS nombre_producto FROM salida s " +
+                 "JOIN producto p ON s.id_producto = p.id WHERE s.id = ?";
+
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement(sql)) {
+        
+        pst.setInt(1, idSalida);
+        ResultSet rs = pst.executeQuery();
+        
+        if (rs.next()) {
+            this.idSalidaAEditar = idSalida;
+
+            // Producto
+            String nombreProd = rs.getString("nombre_producto");
+            for (int i = 0; i < cbxProducto.getItemCount(); i++) {
+                ITProducto item = (ITProducto) cbxProducto.getItemAt(i);
+                if (item.getNombre().contains(nombreProd)) {
+                    cbxProducto.setSelectedItem(item);
+                    break;
+                }
+            }
+
+            // Campos
+            txtCantidad.setText(String.valueOf(rs.getDouble("cantidad_salida")));
+            txtNumeroOrden.setText(rs.getString("numero_orden"));
+            txtDestino.setText(rs.getString("destino"));
+            txtObservaciones.setText(rs.getString("observaciones"));
+
+            // Cambiar botón
+            btnRegistrarSalida.setText("GUARDAR CAMBIOS");
+            btnModificar.setVisible(true);
+            btnEliminar.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "No se encontró la salida con ID: " + idSalida);
+            limpiarCampos(); // opcional
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar salida: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+    
+    
+    
+    // Método auxiliar para obtener id_producto
+private int obtenerIdProductoDesdeSalida(int idSalida) {
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement("SELECT id_producto FROM salida WHERE id = ?")) {
+        pst.setInt(1, idSalida);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) return rs.getInt("id_producto");
+    } catch (SQLException e) { e.printStackTrace(); }
+    return 0;
+}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

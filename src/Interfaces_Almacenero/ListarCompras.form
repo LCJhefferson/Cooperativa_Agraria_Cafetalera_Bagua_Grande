@@ -69,8 +69,8 @@
                                   <Component id="btnEliminar" alignment="0" max="32767" attributes="0"/>
                                   <Component id="btnModificar" alignment="0" max="32767" attributes="0"/>
                                   <Component id="btnExportarExcel" alignment="0" pref="204" max="32767" attributes="0"/>
-                                  <Component id="txtBuscarGuia" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtBuscarGuia" alignment="0" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -150,7 +150,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="btnBuscarGuia">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jButton2"/>
+                <Property name="text" type="java.lang.String" value="p"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBuscarGuiaActionPerformed"/>
@@ -160,7 +160,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="btnFiltrarDni">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jButton2"/>
+                <Property name="text" type="java.lang.String" value="w"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFiltrarDniActionPerformed"/>
