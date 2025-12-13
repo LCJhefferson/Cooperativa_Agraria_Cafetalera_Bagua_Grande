@@ -4,19 +4,77 @@
  */
 package Interfaces_Administrador;
 
+import Conexion.Conexion;
+import Entidades.Sesion;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.PrintWriter;
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 /**
  *
  * @author jheff
  */
 public class A_Nuevo_Usuario extends javax.swing.JInternalFrame {
+    
+    private static A_Nuevo_Usuario instanciaListar = null;
 
+    
+        private int idUsuarioSeleccionado = -1; // ID de la tabla 'usuarios'
+        private int idInfoUsuarioSeleccionado = -1;
     /**
      * Creates new form A_Nuevo_Usuario
      */
-    public A_Nuevo_Usuario() {
+   private A_Nuevo_Usuario() {
         initComponents();
+        configurarVentana();
+        cargarRoles();       // Llena el ComboBox de roles
+        cargarTablaUsuarios(); // Carga la tabla al abrir
+        configurarTabla();
+        // Quitar bordes y barra de título
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        ((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+       
     }
-
+       
+// MÉTODO SINGLETON CORRECTO
+    public static A_Nuevo_Usuario getInstancia() {
+        if (instanciaListar == null || instanciaListar.isClosed()) {
+            instanciaListar = new A_Nuevo_Usuario();
+        }
+        return instanciaListar;
+    }
+   
+   private void configurarVentana() {
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+    }
+   
+   private void configurarTabla() {
+        tblUsuarios.getColumnModel().getColumn(0).setMinWidth(0);
+        tblUsuarios.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblUsuarios.getColumnModel().getColumn(0).setWidth(0);
+    }
+   
+   private void cargarRoles() {
+    // Aquí usamos ItemRol en lugar de ITRol
+    cbxRol.removeAllItems();
+    try (Connection cn = Conexion.getConexion();
+            PreparedStatement pst = cn.prepareStatement("SELECT id, nombre FROM roles ORDER BY nombre")) {
+        ResultSet rs = pst.executeQuery();
+        while (rs.next()) {
+            cbxRol.addItem(new ItemRol (rs.getInt("id"), rs.getString("nombre"))); 
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error cargando roles");
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,7 +86,6 @@ public class A_Nuevo_Usuario extends javax.swing.JInternalFrame {
 
         jPanel2 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -36,19 +93,26 @@ public class A_Nuevo_Usuario extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        txtNombres = new javax.swing.JTextField();
+        txtCelular = new javax.swing.JTextField();
+        txtDireccion = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        txtUsuario = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        cbxRol = new javax.swing.JComboBox<>();
+        btnRegistrarUsuario = new javax.swing.JButton();
+        txtCorreo = new javax.swing.JTextField();
+        txtApellidos = new javax.swing.JTextField();
+        btnModificar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnDescargar = new javax.swing.JButton();
+        txtContrasena = new javax.swing.JPasswordField();
+        txtNroDocumento = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblUsuarios = new javax.swing.JTable();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -61,155 +125,205 @@ public class A_Nuevo_Usuario extends javax.swing.JInternalFrame {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
-        jLabel8.setText("AGREGAR UN NUEVO USUARIO");
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel3.setBackground(new java.awt.Color(204, 204, 204));
 
         jLabel1.setText("Detalles de usuario");
 
-        jLabel2.setText("nombre");
+        jLabel2.setText("Nombre(s)");
 
-        jLabel3.setText("apellido");
+        jLabel3.setText("Apellidos");
 
-        jLabel4.setText("telefono");
+        jLabel4.setText("Numero de Celular");
 
-        jLabel5.setText("correo");
+        jLabel5.setText("Dirección");
 
-        jLabel6.setText("estado");
+        jLabel6.setText("Correo Electronico");
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        txtCelular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                txtCelularActionPerformed(evt);
             }
         });
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", " ", "Inactivo" }));
 
         jLabel9.setText("Datos de Acceso");
 
-        jLabel10.setText("Usuario");
+        jLabel10.setText("Nombre de usuario");
 
         jLabel11.setText("contraseña");
 
-        jLabel12.setText("Rol");
+        jLabel12.setText("Rol de acceso");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrador", "Almacenero" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        cbxRol.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                cbxRolActionPerformed(evt);
             }
         });
+
+        btnRegistrarUsuario.setText("Reguistrar");
+        btnRegistrarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarUsuarioActionPerformed(evt);
+            }
+        });
+
+        btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
+
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+
+        btnDescargar.setText("Descargar");
+        btnDescargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDescargarActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Numero de documento");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addGap(112, 112, 112)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel4)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING))
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel12))
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnRegistrarUsuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtNroDocumento, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtNombres, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtApellidos)
+                            .addComponent(txtCelular)
+                            .addComponent(txtDireccion)
+                            .addComponent(txtCorreo)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtUsuario)
+                            .addComponent(cbxRol, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(34, 34, 34)
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jTextField1)
-                                        .addComponent(jTextField2)
-                                        .addComponent(jTextField3)
-                                        .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                                        .addComponent(jTextField6))))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(23, 23, 23)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(79, 79, 79)
-                        .addComponent(jLabel9)))
-                .addContainerGap(48, Short.MAX_VALUE))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(btnModificar)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnDescargar, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addGap(86, 86, 86)
+                                        .addComponent(jLabel9))
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel3)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addGap(4, 4, 4)
+                                        .addComponent(jLabel2))
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel11)
+                                    .addComponent(jLabel12))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addGap(29, 29, 29))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(jLabel1)
-                .addGap(23, 23, 23)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addGap(19, 19, 19)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addGap(2, 2, 2)
+                .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCelular, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtNroDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
                 .addComponent(jLabel9)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbxRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(100, 100, 100)
+                .addComponent(btnRegistrarUsuario)
+                .addGap(97, 97, 97)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39))
+                    .addComponent(btnModificar)
+                    .addComponent(btnEliminar)
+                    .addComponent(btnDescargar))
+                .addGap(36, 36, 36))
         );
 
-        jButton1.setText("Agregar Usuario");
+        tblUsuarios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblUsuarios);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(82, 82, 82)
-                        .addComponent(jLabel8))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(113, 113, 113)
-                        .addComponent(jButton1)))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addGap(12, 12, 12))
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -226,19 +340,161 @@ public class A_Nuevo_Usuario extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void cbxRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxRolActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_cbxRolActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void txtCelularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCelularActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_txtCelularActionPerformed
 
+    private void btnRegistrarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarUsuarioActionPerformed
+if (idUsuarioSeleccionado != -1) {
+        // Modo Edición activo: El botón dice "GUARDAR CAMBIOS"
+        actualizarUsuario(); 
+    } else {
+        // Modo Registro: El botón dice "REGISTRAR USUARIO"
+        registrarUsuario();
+    }
+    }//GEN-LAST:event_btnRegistrarUsuarioActionPerformed
 
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+int fila = tblUsuarios.getSelectedRow();
+    
+    // 1. Verificar si hay una fila seleccionada
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, 
+            "Selecciona un usuario de la tabla para modificar.", 
+            "Advertencia", 
+            JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // 2. Obtener el ID del usuario
+    // El ID se encuentra en la columna 0 (la columna oculta) de la tabla.
+    try {
+        int idUsuario = (int) tblUsuarios.getValueAt(fila, 0);
+        
+        // 3. Cargar los datos para edición
+        cargarUsuarioParaEditar(idUsuario);
+
+    } catch (ClassCastException e) {
+        JOptionPane.showMessageDialog(this, 
+            "Error al obtener el ID del usuario seleccionado.", 
+            "Error", 
+            JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+int fila = tblUsuarios.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona un usuario para eliminar");
+            return;
+        }
+
+        if (JOptionPane.showConfirmDialog(this, "¿Eliminar este usuario permanentemente?", "Confirmar",
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            int idUsuario = (int) tblUsuarios.getValueAt(fila, 0);
+            try (Connection cn = Conexion.getConexion();
+                 PreparedStatement pst = cn.prepareStatement("DELETE FROM usuarios WHERE id = ?")) {
+                pst.setInt(1, idUsuario);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Usuario eliminado");
+                cargarTablaUsuarios();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnDescargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarActionPerformed
+      exportarTablaUsuariosACSV();  // TODO add your handling code here:
+    }//GEN-LAST:event_btnDescargarActionPerformed
+
+private void registrarUsuario(){
+try {
+    // Validaciones (dejarlas igual, son correctas)
+    if (txtNombres.getText().trim().isEmpty() || txtApellidos.getText().trim().isEmpty() ||
+        txtUsuario.getText().trim().isEmpty() || String.valueOf(txtContrasena.getPassword()).isEmpty() ||
+        cbxRol.getSelectedItem() == null) {
+        throw new Exception("Todos los campos obligatorios deben llenarse");
+    }
+
+    String usuario = txtUsuario.getText().trim();
+    if (usuarioExiste(usuario)) {
+        throw new Exception("El nombre de usuario ya existe");
+    }
+
+    // --- NUEVA LÓGICA DE TRANSACCIÓN ---
+    try (Connection cn = Conexion.getConexion()) {
+        cn.setAutoCommit(false); // Iniciar transacción
+        
+        ItemRol rol = (ItemRol) cbxRol.getSelectedItem();
+        String contrasenaHash = hashPassword(String.valueOf(txtContrasena.getPassword()));
+        
+        // Asumiremos que tiene un JTextField llamado txtNroDocumento
+        String nroDocumento = txtNroDocumento.getText().trim(); 
+        
+        // *** 1. Insertar primero en la tabla 'usuarios' ***
+        String sqlUser = "INSERT INTO usuarios (Usuario, nro_documento, id_tipoDocumento, contraseña, id_rol) " +
+                         "VALUES (?, ?, ?, ?, ?)"; 
+        
+        int idUsuarioGenerado;
+        try (PreparedStatement pst = cn.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS)) {
+            pst.setString(1, usuario);
+            pst.setString(2, nroDocumento);
+            // Debe tener un campo para seleccionar el tipo de documento (DNI, etc.)
+            // Asumo que el ID de tipo documento (DNI) es 1 (según sus datos)
+            pst.setInt(3, 1); 
+            pst.setString(4, contrasenaHash);
+            pst.setInt(5, rol.getId());
+            pst.executeUpdate();
+
+            ResultSet generatedKeys = pst.getGeneratedKeys();
+            if (!generatedKeys.next()) {
+                throw new SQLException("Fallo al obtener el ID del usuario.");
+            }
+            idUsuarioGenerado = generatedKeys.getInt(1);
+        }
+
+        // *** 2. Insertar en la tabla 'info_usuario' usando el ID generado ***
+        // CORRECCIÓN DE NOMBRES DE COLUMNA: nombre, apellido, telefono, correo
+        String sqlInfo = "INSERT INTO info_usuario (id_usuario, nombre, apellido, telefono, direccion, correo) " +
+                         "VALUES (?, ?, ?, ?, ?, ?)";
+        
+        try (PreparedStatement pst = cn.prepareStatement(sqlInfo)) {
+            pst.setInt(1, idUsuarioGenerado); // Usar el ID de la tabla 'usuarios'
+            pst.setString(2, txtNombres.getText().trim()); // Mapea a 'nombre'
+            pst.setString(3, txtApellidos.getText().trim()); // Mapea a 'apellido'
+            pst.setString(4, txtCelular.getText().trim()); // Mapea a 'telefono'
+            pst.setString(5, txtDireccion.getText().trim());
+            pst.setString(6, txtCorreo.getText().trim()); // Mapea a 'correo'
+            pst.executeUpdate();
+        }
+
+        cn.commit(); // Confirmar la transacción
+        JOptionPane.showMessageDialog(this, "¡Usuario registrado correctamente!");
+        limpiarCampos();
+        cargarTablaUsuarios();
+
+    } catch (SQLException e) {
+        // Manejo del Rollback en caso de error
+        JOptionPane.showMessageDialog(this, "Error al registrar: " + e.getMessage());
+        try { 
+            if (Conexion.getConexion() != null) Conexion.getConexion().rollback(); 
+        } catch (SQLException ex) { ex.printStackTrace(); }
+        e.printStackTrace();
+    }
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+}}
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JButton btnDescargar;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnRegistrarUsuario;
+    private javax.swing.JComboBox<ItemRol> cbxRol;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -248,16 +504,355 @@ public class A_Nuevo_Usuario extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblUsuarios;
+    private javax.swing.JTextField txtApellidos;
+    private javax.swing.JTextField txtCelular;
+    private javax.swing.JPasswordField txtContrasena;
+    private javax.swing.JTextField txtCorreo;
+    private javax.swing.JTextField txtDireccion;
+    private javax.swing.JTextField txtNombres;
+    private javax.swing.JTextField txtNroDocumento;
+    private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
+// CARGAR TABLA DE USUARIOS
+private void cargarTablaUsuarios() {
+    String[] titulos = {"ID", "Usuario", "Nombre Completo", "Rol", "Correo", "Celular"};
+    DefaultTableModel modelo = new DefaultTableModel(null, titulos) {
+        @Override
+        public boolean isCellEditable(int row, int column) { return false; }
+    };
+    tblUsuarios.setModel(modelo);
+
+    String sql = "SELECT u.id, u.usuario, " +
+                 "CONCAT(iu.nombre, ' ', iu.apellido) AS nombre_completo, " +
+                 "r.nombre AS rol, iu.correo, iu.telefono " +
+                 "FROM usuarios u " +
+                 "LEFT JOIN info_usuario iu ON iu.id_usuario = u.id " +  // ← ENLACE CORRECTO
+                 "JOIN roles r ON u.id_rol = r.id " +
+                 "ORDER BY u.usuario";
+
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement(sql);
+         ResultSet rs = pst.executeQuery()) {
+
+        while (rs.next()) {
+            modelo.addRow(new Object[]{
+                rs.getInt("id"),
+                rs.getString("usuario"),
+                rs.getString("nombre_completo") != null ? rs.getString("nombre_completo") : "Sin datos",
+                rs.getString("rol"),
+                rs.getString("correo") != null ? rs.getString("correo") : "",
+                rs.getString("telefono") != null ? rs.getString("telefono") : ""
+            });
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar usuarios: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+
+// HASH DE CONTRASEÑA (SHA-256)
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (Exception e) {
+            return password; // fallback (no recomendado)
+        }
+    }
+
+    // VERIFICAR SI USUARIO EXISTE
+    private boolean usuarioExiste(String usuario) {
+        try (Connection cn = Conexion.getConexion();
+             PreparedStatement pst = cn.prepareStatement("SELECT 1 FROM usuarios WHERE usuario = ?")) {
+            pst.setString(1, usuario);
+            ResultSet rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+   
+    // LIMPIAR CAMPOS
+    private void limpiarCampos() {
+        txtNombres.setText("");
+        txtApellidos.setText("");
+        txtCelular.setText("");
+        txtDireccion.setText("");
+        txtCorreo.setText("");
+        txtNroDocumento.setText("");
+        txtUsuario.setText("");
+        txtContrasena.setText("");
+        cbxRol.setSelectedIndex(0);
+    }
+    
+
+    
+    // Clase auxiliar para roles
+    class ItemRol {
+        private int id;
+        private String nombre;
+        public ItemRol(int id, String nombre) {
+            this.id = id;
+            this.nombre = nombre;
+        }
+        public int getId() { return id; }
+        public String getNombre() { return nombre; }
+        @Override
+        public String toString() { return nombre; }
+    }
+      
+    private void exportarTablaUsuariosACSV() {
+    int fila = tblUsuarios.getSelectedRow();
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Selecciona un usuario para exportar su ficha", 
+                                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // === DATOS DEL USUARIO SELECCIONADO ===
+    String usuario = tblUsuarios.getValueAt(fila, 1).toString(); // Usuario
+    String nombreCompleto = tblUsuarios.getValueAt(fila, 2).toString(); // Nombre Completo
+    String rol = tblUsuarios.getValueAt(fila, 3).toString(); // Rol
+    String correo = tblUsuarios.getValueAt(fila, 4).toString(); // Correo
+    String celular = tblUsuarios.getValueAt(fila, 5).toString(); // Celular
+
+    // === SELECTOR DE ARCHIVO ===
+    JFileChooser selector = new JFileChooser();
+    selector.setDialogTitle("Guardar ficha de usuario");
+
+    // Nombre sugerido bonito
+    String nombreSugerido = "Ficha_Usuario_" + usuario + ".csv";
+    selector.setSelectedFile(new File(nombreSugerido));
+
+    FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivo Excel/CSV (*.csv)", "csv");
+    selector.setFileFilter(filtro);
+
+    int opcion = selector.showSaveDialog(this);
+    if (opcion != JFileChooser.APPROVE_OPTION) {
+        return; // Canceló
+    }
+
+    File archivo = selector.getSelectedFile();
+    if (!archivo.getName().toLowerCase().endsWith(".csv")) {
+        archivo = new File(archivo.getAbsolutePath() + ".csv");
+    }
+
+    // Confirmar sobrescritura
+    if (archivo.exists()) {
+        int confirmar = JOptionPane.showConfirmDialog(this,
+            "El archivo ya existe.\n¿Deseas reemplazarlo?", "Confirmar",
+            JOptionPane.YES_NO_OPTION);
+        if (confirmar != JOptionPane.YES_OPTION) {
+            return;
+        }
+    }
+
+    // === ESCRIBIR EL CSV ===
+    try (PrintWriter pw = new PrintWriter(archivo, "UTF-8")) {
+        pw.println("COOPERATIVA AGRARIA CAFÉ BAQUA GRANDE LTDA.");
+        pw.println("FICHA DE USUARIO DEL SISTEMA");
+        pw.println();
+        pw.println("INFORMACIÓN PERSONAL");
+        pw.println("Nombre completo:," + nombreCompleto);
+        pw.println("Número de celular:," + celular);
+        pw.println("Correo electrónico:," + correo);
+        pw.println();
+        pw.println("DATOS DE ACCESO");
+        pw.println("Nombre de usuario:," +"                        "+ usuario);
+        pw.println("Rol asignado:," + "                        "+rol);
+        pw.println("Fecha de generación:," + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date()));
+        pw.println();
+        pw.println("_________________,_________________");
+
+        JOptionPane.showMessageDialog(this,
+            "¡Ficha de usuario exportada correctamente!\n" + archivo.getAbsolutePath(),
+            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        // Abrir automáticamente
+        Desktop.getDesktop().open(archivo);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this,
+            "Error al exportar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
+}
+    
+    private void actualizarUsuario() {
+    // Validación de modo Edición
+    if (idUsuarioSeleccionado == -1 || idInfoUsuarioSeleccionado == -1) {
+        JOptionPane.showMessageDialog(this, "Error: No hay usuario seleccionado para modificar.");
+        return;
+    }
+    
+    // Validaciones básicas de campos
+    String nombres = txtNombres.getText().trim();
+    String apellidos = txtApellidos.getText().trim();
+    String contrasena = String.valueOf(txtContrasena.getPassword());
+    ItemRol rol = (ItemRol) cbxRol.getSelectedItem();
+
+    if (nombres.isEmpty() || apellidos.isEmpty() || rol == null) {
+        JOptionPane.showMessageDialog(this, "Nombres, apellidos y rol son campos obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    Connection cn = null;
+    try {
+        cn = Conexion.getConexion();
+        cn.setAutoCommit(false); // Iniciar transacción
+
+        // A. Actualizar info_usuario (Datos personales)
+        // Corregido a los nombres de columna de la DB: nombre, apellido, telefono, correo
+        String sqlInfo = "UPDATE info_usuario SET nombre=?, apellido=?, telefono=?, direccion=?, correo=? WHERE id_usuario=?";
+        try (PreparedStatement pst = cn.prepareStatement(sqlInfo)) {
+            pst.setString(1, nombres);
+            pst.setString(2, apellidos);
+            pst.setString(3, txtCelular.getText().trim());
+            pst.setString(4, txtDireccion.getText().trim());
+            pst.setString(5, txtCorreo.getText().trim());
+            pst.setInt(6, idUsuarioSeleccionado); // id_usuario en info_usuario es FK/PK
+            pst.executeUpdate();
+        }
+
+        // B. Actualizar usuarios (Rol y Contraseña)
+        
+        // 1. Definir la consulta base para 'usuarios'
+        String sqlUser;
+        PreparedStatement pstUser;
+        
+        if (!contrasena.isEmpty()) {
+            // Si el campo de contraseña no está vacío, la actualizamos (con hash)
+            String contrasenaHash = hashPassword(contrasena);
+            // CORRECCIÓN: Usar 'contraseña' como columna en la DB
+            sqlUser = "UPDATE usuarios SET contraseña=?, id_rol=? WHERE id=?";
+            pstUser = cn.prepareStatement(sqlUser);
+            pstUser.setString(1, contrasenaHash);
+            pstUser.setInt(2, rol.getId());
+            pstUser.setInt(3, idUsuarioSeleccionado);
+        } else {
+            // Si el campo está vacío, solo actualizamos el rol
+            sqlUser = "UPDATE usuarios SET id_rol=? WHERE id=?";
+            pstUser = cn.prepareStatement(sqlUser);
+            pstUser.setInt(1, rol.getId());
+            pstUser.setInt(2, idUsuarioSeleccionado);
+        }
+        
+        try (PreparedStatement pst = pstUser) {
+            pst.executeUpdate();
+        }
+
+        cn.commit(); // Confirmar la transacción
+        JOptionPane.showMessageDialog(this, "¡Usuario modificado correctamente!");
+        resetearEstado(); // Limpia campos, resetea IDs y botón
+        cargarTablaUsuarios();
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al modificar en la base de datos: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+        try { 
+            if (cn != null) cn.rollback(); // Deshacer si hubo un error
+        } catch (SQLException ex) { 
+            ex.printStackTrace(); 
+        }
+        e.printStackTrace();
+    }
+}
+    
+    private void resetearEstado() {
+    // Se asume que este método limpia todos los JTextField/JPasswordField
+    limpiarCampos(); 
+    
+  // Restablecer el estado lógico
+    idUsuarioSeleccionado = -1;
+    idInfoUsuarioSeleccionado = -1;
+    
+    // Deshacer la transición visual/funcional
+    btnRegistrarUsuario.setText("REGISTRAR USUARIO"); 
+    txtUsuario.setEnabled(true);
+    
+    btnEliminar.setEnabled(true);
+    btnModificar.setEnabled(true);
+    // Opcional: Re-habilitar el botón Modificar (si lo deshabilitó en habilitarModoEdicionUsuario)
+    // btnModificar.setEnabled(true);
+}
+    
+   private void cargarUsuarioParaEditar(int idUsuario) {
+    try (Connection cn = Conexion.getConexion();
+          PreparedStatement pst = cn.prepareStatement(
+              // Consulta SQL Corregida: Unir por u.id = iu.id_usuario
+              "SELECT u.*, iu.*, r.nombre AS rol_nombre FROM usuarios u " +
+              "JOIN info_usuario iu ON u.id = iu.id_usuario " +  // <--- ¡CLAVE CORREGIDA!
+              "JOIN roles r ON u.id_rol = r.id WHERE u.id = ?")) {
+        
+        pst.setInt(1, idUsuario);
+        ResultSet rs = pst.executeQuery();
+        
+        if (rs.next()) {
+            // Se asume que el mapeo de nombres de columna (nombre, apellido, telefono, etc.)
+            // dentro del if ya fue verificado y es correcto para la DB.
+            
+            
+            // Datos personales
+            txtNombres.setText(rs.getString("nombre"));      // Corregido
+            txtApellidos.setText(rs.getString("apellido"));  // Corregido
+            txtCelular.setText(rs.getString("telefono"));    // Corregido
+            txtDireccion.setText(rs.getString("direccion"));
+            txtCorreo.setText(rs.getString("correo"));  
+            txtNroDocumento.setText(rs.getString("nro_documento")); // Corregido
+            
+            // Datos de acceso
+            txtUsuario.setText(rs.getString("Usuario")); // Nota: En la DB es 'Usuario' (con mayúscula)
+            txtContrasena.setText("contraseña"); 
+            
+            // Aquí debe también guardar el ID del usuario en su variable global
+            // si aún no lo hace, para que la función UPDATE sepa qué ID usar.
+            this.idUsuarioSeleccionado = idUsuario;
+            this.idInfoUsuarioSeleccionado = rs.getInt("id_usuario");
+
+            // Seleccionar rol (la lógica de ItemRol es correcta)
+            String rolNombre = rs.getString("rol_nombre");
+            for (int i = 0; i < cbxRol.getItemCount(); i++) {
+                ItemRol item = (ItemRol) cbxRol.getItemAt(i);
+                if (item.getNombre().equals(rolNombre)) {
+                    cbxRol.setSelectedItem(item);
+                    break;
+                }
+            }
+
+            // Cambiar el texto del botón
+            // Asegúrese de que este botón exista:
+            // btnRegistrarUsuario.setText("GUARDAR CAMBIOS"); 
+            habilitarModoEdicionUsuario();
+           
+        } else {
+             JOptionPane.showMessageDialog(this, "El usuario seleccionado no tiene detalles asociados.");
+        }
+        
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar usuario: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
+}
+   
+    private void habilitarModoEdicionUsuario() {
+    // 1. Transición Visual del Botón
+    btnRegistrarUsuario.setText("GUARDAR CAMBIOS");
+    
+    // 2. Control de Campos Críticos (Bloquear cambio de usuario)
+   // txtUsuario.setEnabled(false); 
+   // txtContrasena.setEnabled(false);
+    
+    btnModificar.setEnabled(false); 
+    btnEliminar.setEnabled(false);
+}
+    
+    
+    
 }

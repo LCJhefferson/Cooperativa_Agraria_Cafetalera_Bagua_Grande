@@ -673,6 +673,7 @@ private void buscarSocioPorDNI(String dni) {
             System.err.println("Error al cerrar recursos: " + ex.getMessage());
         }
     }
+    
 }
  
 private String obtenerInicialesSocio(Connection cn, int idSocio) throws SQLException {

@@ -6,6 +6,7 @@ package Interfaces_Administrador;
 
 
 import Interfaces_Almacenero.ListarCompras;
+import Interfaces_Almacenero.ListarSalidas;
 import Interfaces_Almacenero.RealizarCompras;
 import Interfaces_generales.Login;
 import javax.swing.JFrame;
@@ -58,6 +59,8 @@ public class Menu_Administrador extends javax.swing.JFrame {
         jButton11 = new javax.swing.JButton();
         ListaVentas = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
+        JBT_RegistrarCompra1 = new javax.swing.JButton();
+        BTNSalidas1 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         LBLUbicacion = new javax.swing.JLabel();
         LBLTitulo = new javax.swing.JLabel();
@@ -260,6 +263,28 @@ public class Menu_Administrador extends javax.swing.JFrame {
             }
         });
 
+        JBT_RegistrarCompra1.setBackground(new java.awt.Color(51, 102, 0));
+        JBT_RegistrarCompra1.setFont(new java.awt.Font("Segoe UI Black", 1, 14)); // NOI18N
+        JBT_RegistrarCompra1.setForeground(new java.awt.Color(255, 255, 255));
+        JBT_RegistrarCompra1.setText("Registrar Compra");
+        JBT_RegistrarCompra1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 102, 0)));
+        JBT_RegistrarCompra1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBT_RegistrarCompra1ActionPerformed(evt);
+            }
+        });
+
+        BTNSalidas1.setBackground(new java.awt.Color(51, 102, 0));
+        BTNSalidas1.setFont(new java.awt.Font("Segoe UI Black", 1, 14)); // NOI18N
+        BTNSalidas1.setForeground(new java.awt.Color(255, 255, 255));
+        BTNSalidas1.setText("Registrar Salida");
+        BTNSalidas1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 102, 0)));
+        BTNSalidas1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BTNSalidas1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -274,25 +299,31 @@ public class Menu_Administrador extends javax.swing.JFrame {
             .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(ListaCompras, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(ListaVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JBT_RegistrarCompra1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(BTNSalidas1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addGap(32, 32, 32)
                 .addComponent(JBT_RegistrarCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BTNSalidas, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(JBT_RegistrarCompra1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BTNSalidas1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ListaCompras, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ListaVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(129, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(174, Short.MAX_VALUE))
         );
 
         jPanel4.setBackground(new java.awt.Color(153, 204, 0));
@@ -378,17 +409,7 @@ public class Menu_Administrador extends javax.swing.JFrame {
     }//GEN-LAST:event_BTClienteActionPerformed
 
     private void JBT_RegistrarCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBT_RegistrarCompraActionPerformed
-
-actualizarNavegacion("Registrar Compras", "Registrar Compras");
-    }//GEN-LAST:event_JBT_RegistrarCompraActionPerformed
-
-    private void BTNSalidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNSalidasActionPerformed
-
-actualizarNavegacion("Registrar Salidas", "Registrar Salidas");
-    }//GEN-LAST:event_BTNSalidasActionPerformed
-
-    private void ListaComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaComprasActionPerformed
- ListarCompras jif = ListarCompras.getInstancia(); // 1. Obtener la instancia
+A_Nuevo_Usuario jif = A_Nuevo_Usuario.getInstancia(); // 1. Obtener la instancia
     
     // ** 2. Manejo de la adición al escritorio (Solo si no ha sido agregada) **
     if (jif.getParent() == null) {
@@ -413,7 +434,70 @@ actualizarNavegacion("Registrar Salidas", "Registrar Salidas");
     } catch (java.beans.PropertyVetoException ex) {
         // Capturar excepción si el Look and Feel prohíbe el cambio de estado
         ex.printStackTrace();
-    } 
+    }
+      
+actualizarNavegacion("Usuarios", "Usuarios");
+    }//GEN-LAST:event_JBT_RegistrarCompraActionPerformed
+
+    private void BTNSalidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNSalidasActionPerformed
+ A_Nuevo_Socio jif = A_Nuevo_Socio.getInstancia(); // 1. Obtener la instancia
+    
+    // ** 2. Manejo de la adición al escritorio (Solo si no ha sido agregada) **
+    if (jif.getParent() == null) {
+        Principal.add(jif); // Asumiendo que 'Principal' es el JDesktopPane
+        jif.setVisible(true);
+    }
+    
+    // ** 3. Manejo de estados (Iconizada/Frente) **
+    try {
+        // Restaurar si está minimizada
+        if (jif.isIcon()) { 
+            jif.setIcon(false); 
+        }
+        
+        // Asegurar que esté visible (útil si fue oculta con setVisible(false))
+        jif.setVisible(true); 
+        jif.setMaximum(true);
+        // Traer al frente (el más importante si ya estaba abierta)
+        jif.setSelected(true); 
+  
+
+    } catch (java.beans.PropertyVetoException ex) {
+        // Capturar excepción si el Look and Feel prohíbe el cambio de estado
+        ex.printStackTrace();
+    }
+    
+actualizarNavegacion("Socios", "Socios");
+    }//GEN-LAST:event_BTNSalidasActionPerformed
+
+    private void ListaComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaComprasActionPerformed
+ListarCompras jif = ListarCompras.getInstancia(); // 1. Obtener la instancia
+    
+    // ** 2. Manejo de la adición al escritorio (Solo si no ha sido agregada) **
+    if (jif.getParent() == null) {
+        Principal.add(jif); // Asumiendo que 'Principal' es el JDesktopPane
+        jif.setVisible(true);
+    }
+    
+    // ** 3. Manejo de estados (Iconizada/Frente) **
+    try {
+        // Restaurar si está minimizada
+        if (jif.isIcon()) { 
+            jif.setIcon(false); 
+        }
+        
+        // Asegurar que esté visible (útil si fue oculta con setVisible(false))
+        jif.setVisible(true); 
+        jif.setMaximum(true);
+        // Traer al frente (el más importante si ya estaba abierta)
+        jif.setSelected(true); 
+  
+
+    } catch (java.beans.PropertyVetoException ex) {
+        // Capturar excepción si el Look and Feel prohíbe el cambio de estado
+        ex.printStackTrace();
+    }
+      
 actualizarNavegacion("Lista de Compras", "Lista de Compras");
     }//GEN-LAST:event_ListaComprasActionPerformed
 
@@ -422,7 +506,33 @@ actualizarNavegacion("Lista de Compras", "Lista de Compras");
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void ListaVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListaVentasActionPerformed
+ ListarSalidas jif = ListarSalidas.getInstancia(); // 1. Obtener la instancia
+    
+    // ** 2. Manejo de la adición al escritorio (Solo si no ha sido agregada) **
+    if (jif.getParent() == null) {
+        Principal.add(jif); // Asumiendo que 'Principal' es el JDesktopPane
+        jif.setVisible(true);
+    }
+    
+    // ** 3. Manejo de estados (Iconizada/Frente) **
+    try {
+        // Restaurar si está minimizada
+        if (jif.isIcon()) { 
+            jif.setIcon(false); 
+        }
+        
+        // Asegurar que esté visible (útil si fue oculta con setVisible(false))
+        jif.setVisible(true); 
+        jif.setMaximum(true);
+        // Traer al frente (el más importante si ya estaba abierta)
+        jif.setSelected(true); 
+  
 
+    } catch (java.beans.PropertyVetoException ex) {
+        // Capturar excepción si el Look and Feel prohíbe el cambio de estado
+        ex.printStackTrace();
+    }
+    
 actualizarNavegacion("Lista de salidad", "Lista de salidad");
     }//GEN-LAST:event_ListaVentasActionPerformed
 
@@ -453,6 +563,66 @@ actualizarNavegacion("Lista de salidad", "Lista de salidad");
         
         
     }//GEN-LAST:event_btnCerrarSecionActionPerformed
+
+    private void JBT_RegistrarCompra1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBT_RegistrarCompra1ActionPerformed
+RealizarCompras jif = RealizarCompras.getInstancia(); // 1. Obtener la instancia
+    
+    // ** 2. Manejo de la adición al escritorio (Solo si no ha sido agregada) **
+    if (jif.getParent() == null) {
+        Principal.add(jif); // Asumiendo que 'Principal' es el JDesktopPane
+        jif.setVisible(true);
+    }
+    
+    // ** 3. Manejo de estados (Iconizada/Frente) **
+    try {
+        // Restaurar si está minimizada
+        if (jif.isIcon()) { 
+            jif.setIcon(false); 
+        }
+        
+        // Asegurar que esté visible (útil si fue oculta con setVisible(false))
+        jif.setVisible(true); 
+        jif.setMaximum(true);
+        // Traer al frente (el más importante si ya estaba abierta)
+        jif.setSelected(true); 
+  
+
+    } catch (java.beans.PropertyVetoException ex) {
+        // Capturar excepción si el Look and Feel prohíbe el cambio de estado
+        ex.printStackTrace();
+    }
+actualizarNavegacion("Registrar Compras", "Registrar Compras");        // TODO add your handling code here:
+    }//GEN-LAST:event_JBT_RegistrarCompra1ActionPerformed
+
+    private void BTNSalidas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNSalidas1ActionPerformed
+ RealizarCompras jif = RealizarCompras.getInstancia(); // 1. Obtener la instancia
+    
+    // ** 2. Manejo de la adición al escritorio (Solo si no ha sido agregada) **
+    if (jif.getParent() == null) {
+        Principal.add(jif); // Asumiendo que 'Principal' es el JDesktopPane
+        jif.setVisible(true);
+    }
+    
+    // ** 3. Manejo de estados (Iconizada/Frente) **
+    try {
+        // Restaurar si está minimizada
+        if (jif.isIcon()) { 
+            jif.setIcon(false); 
+        }
+        
+        // Asegurar que esté visible (útil si fue oculta con setVisible(false))
+        jif.setVisible(true); 
+        jif.setMaximum(true);
+        // Traer al frente (el más importante si ya estaba abierta)
+        jif.setSelected(true); 
+  
+
+    } catch (java.beans.PropertyVetoException ex) {
+        // Capturar excepción si el Look and Feel prohíbe el cambio de estado
+        ex.printStackTrace();
+    }
+actualizarNavegacion("Registrar Compras", "Registrar Compras");        // TODO add your handling code here:
+    }//GEN-LAST:event_BTNSalidas1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -491,7 +661,9 @@ actualizarNavegacion("Lista de salidad", "Lista de salidad");
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BTCliente;
     private javax.swing.JButton BTNSalidas;
+    private javax.swing.JButton BTNSalidas1;
     private javax.swing.JButton JBT_RegistrarCompra;
+    private javax.swing.JButton JBT_RegistrarCompra1;
     private javax.swing.JLabel LBLTitulo;
     private javax.swing.JLabel LBLUbicacion;
     private javax.swing.JButton ListaCompras;

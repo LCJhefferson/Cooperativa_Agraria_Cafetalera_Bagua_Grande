@@ -4,37 +4,116 @@
  */
 package Interfaces_Administrador;
 
+import Conexion.Conexion;
+import Entidades.ItemCobase;
+import Entidades.ItemTipoDocumento;
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 /**
  *
  * @author jheff
  */
 public class A_Nuevo_Socio extends javax.swing.JInternalFrame {
+private static A_Nuevo_Socio instanciaListar = null;
 
-    /**
+private int idSocioAEditar = -1;
+/**
      * Creates new form A_Nuevo_Socio
      */
-    public A_Nuevo_Socio() {
+    private A_Nuevo_Socio() {
         initComponents();
+        cargarTablaSocios();  
+        cargarTiposDocumento();
+    cargarCobases();
+        // Quitar bordes y barra de título
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        ((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+        
     }
 
-    
-     private int id;
-    private String nombre;
-    private String dni;
-    private String estado;
-    
-    
-    
-    
+   public static A_Nuevo_Socio getInstancia() {
+        if (instanciaListar == null || instanciaListar.isClosed()) {
+            instanciaListar = new A_Nuevo_Socio();
+        }
+        return instanciaListar;
+    }
+   
     
     
+    private void configurarTablaSocios() {
+    // Se asume que la tabla se llama TblSocios
+    
+    // Ocultar la columna ID (columna 0)
+    TblSocios.getColumnModel().getColumn(0).setMinWidth(0);
+    TblSocios.getColumnModel().getColumn(0).setMaxWidth(0);
+    TblSocios.getColumnModel().getColumn(0).setWidth(0);
+    
+    // Opcional: Ajustar anchos de otras columnas
+    // TblSocios.getColumnModel().getColumn(1).setPreferredWidth(200); // Nombre
+    // TblSocios.getColumnModel().getColumn(3).setPreferredWidth(100); // Nro. Documento
+}
+       
+    private void cargarTiposDocumento() {
+    // Asegúrese de que el JComboBox esté declarado como JComboBox<ItemTipoDocumento>
+    CbxTipoDocumento.removeAllItems();
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement("SELECT id, nombre FROM tipodocumento ORDER BY nombre")) {
+        
+        ResultSet rs = pst.executeQuery();
+        
+        // Opcional: Agregar un elemento por defecto o "Seleccionar"
+        // CbxTipoDocumento.addItem(new ItemTipoDocumento(-1, "Seleccione Tipo..."));
+        
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            CbxTipoDocumento.addItem(new ItemTipoDocumento(id, nombre));
+        }
+        
+        CbxTipoDocumento.setSelectedIndex(-1); // Dejar sin seleccionar por defecto
+        
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar Tipos de Documento: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+    }
+}
     
     
-    
-    
-    
-    
-    
+    private void cargarCobases() {
+    // Asegúrese de que el JComboBox esté declarado como JComboBox<ItemCobase>
+    CbxCobase.removeAllItems();
+    try (Connection cn = Conexion.getConexion();
+         PreparedStatement pst = cn.prepareStatement("SELECT id, nombre FROM cobase ORDER BY nombre")) {
+        
+        ResultSet rs = pst.executeQuery();
+        
+        // Opcional: Permitir que el socio no tenga co-base (si la columna id_cobase es NULLable)
+        CbxCobase.addItem(new ItemCobase(0, "Ninguna / N/A")); // ID 0 o -1 para representar NULL
+        
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            CbxCobase.addItem(new ItemCobase(id, nombre));
+        }
+        
+        CbxCobase.setSelectedIndex(-1);
+        
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar Co-bases: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,77 +123,108 @@ public class A_Nuevo_Socio extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        TxtNombreSocio = new javax.swing.JTextField();
+        TxtNroDocumento = new javax.swing.JTextField();
+        CbxTipoDocumento = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
+        TxtNumeroDeCelular = new javax.swing.JTextField();
+        TxtDireccion = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
+        BtnAgregarSocio = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        CbxCobase = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
+        TxtNumeroDeHectarias = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TblSocios = new javax.swing.JTable();
 
-        jLabel1.setText("AGREGAR NUEVO SOCIO");
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel2.setText("nombre");
+        jLabel2.setText("Nombre completo ");
 
-        jLabel3.setText("DNI");
+        jLabel3.setText("Numero de documento");
 
-        jLabel4.setText("cobase");
+        jLabel4.setText("Cobase");
 
-        jLabel5.setText("estado");
+        jLabel5.setText("Tipo de documento ");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        TxtNombreSocio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                TxtNombreSocioActionPerformed(evt);
             }
         });
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        TxtNroDocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                TxtNroDocumentoActionPerformed(evt);
             }
         });
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        CbxTipoDocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                CbxTipoDocumentoActionPerformed(evt);
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo ", "Inactivo", " " }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setText("telefono");
+        jLabel6.setText("Numero de celular");
 
         jLabel7.setText("Direccion");
 
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        TxtNumeroDeCelular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                TxtNumeroDeCelularActionPerformed(evt);
             }
         });
 
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
+        TxtDireccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
+                TxtDireccionActionPerformed(evt);
             }
         });
 
         jLabel8.setText("Agregar socio");
 
-        jButton1.setText("Agregar Socio");
+        BtnAgregarSocio.setText("Agregar Socio");
+        BtnAgregarSocio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnAgregarSocioActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Modificar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Descargar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setText("Eliminar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Numero de hectarias a disposición");
+
+        jButton1.setText("Descargar Todo");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -128,128 +238,216 @@ public class A_Nuevo_Socio extends javax.swing.JInternalFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(209, 209, 209)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(111, 111, 111)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(70, 70, 70)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(66, 66, 66)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel7))
-                                .addGap(45, 45, 45)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField1)
-                                    .addComponent(jTextField2)
-                                    .addComponent(jTextField3)
-                                    .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                                    .addComponent(jTextField4))))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(0, 214, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(212, 212, 212))
+                        .addGap(25, 25, 25)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(TxtNombreSocio, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(BtnAgregarSocio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(TxtNumeroDeHectarias, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TxtDireccion, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TxtNumeroDeCelular, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(CbxCobase, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(TxtNroDocumento, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(CbxTipoDocumento, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
+                .addGap(11, 11, 11)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(TxtNombreSocio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(CbxTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(TxtNroDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(CbxCobase, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(TxtNumeroDeCelular, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(TxtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(TxtNumeroDeHectarias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(82, 82, 82)
+                .addComponent(BtnAgregarSocio)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addGap(32, 32, 32))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
+                .addGap(35, 35, 35))
+        );
+
+        TblSocios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(TblSocios);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(300, 300, 300)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(194, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(52, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void TxtNombreSocioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtNombreSocioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_TxtNombreSocioActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void TxtNroDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtNroDocumentoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_TxtNroDocumentoActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void TxtNumeroDeCelularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtNumeroDeCelularActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_TxtNumeroDeCelularActionPerformed
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void TxtDireccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtDireccionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }//GEN-LAST:event_TxtDireccionActionPerformed
 
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
+    private void BtnAgregarSocioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAgregarSocioActionPerformed
+if (idSocioAEditar != -1) {
+        // Modo Edición
+        actualizarSocio();
+    } else {
+        // Modo Registro
+        registrarSocio();
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_BtnAgregarSocioActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+int fila = TblSocios.getSelectedRow(); // Asumiendo que la tabla se llama TblSocios
+    
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Selecciona un socio de la tabla para modificar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    try {
+        // Obtener el ID de la columna 0 (debe ser la columna oculta o la primera)
+        int idSocio = (int) TblSocios.getValueAt(fila, 0); 
+        
+        cargarSocioParaEditar(idSocio); // Llamar a la función de carga
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al obtener el ID del socio: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void CbxTipoDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CbxTipoDocumentoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_CbxTipoDocumentoActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+exportarSocioSeleccionadoACSV();      // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+int fila = TblSocios.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona un usuario para eliminar");
+            return;
+        }
+
+        if (JOptionPane.showConfirmDialog(this, "¿Eliminar este usuario permanentemente?", "Confirmar",
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            int idSocio = (int) TblSocios.getValueAt(fila, 0);
+            try (Connection cn = Conexion.getConexion();
+                 PreparedStatement pst = cn.prepareStatement("DELETE FROM socio WHERE id = ?")) {
+                pst.setInt(1, idSocio);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Socio eliminado");
+                cargarTablaSocios();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        }        // TODO add your handling code here:        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+exportarSocioACSV();            // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnAgregarSocio;
+    private javax.swing.JComboBox<ItemCobase> CbxCobase;
+    private javax.swing.JComboBox<ItemTipoDocumento> CbxTipoDocumento;
+    private javax.swing.JTable TblSocios;
+    private javax.swing.JTextField TxtDireccion;
+    private javax.swing.JTextField TxtNombreSocio;
+    private javax.swing.JTextField TxtNroDocumento;
+    private javax.swing.JTextField TxtNumeroDeCelular;
+    private javax.swing.JTextField TxtNumeroDeHectarias;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -258,11 +456,576 @@ public class A_Nuevo_Socio extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+private void registrarSocio() {
+    // 1. Obtener y validar datos
+    String nombre = TxtNombreSocio.getText().trim();
+    String nroDocumento = TxtNroDocumento.getText().trim();
+    String telefono = TxtNumeroDeCelular.getText().trim();
+    String direccion = TxtDireccion.getText().trim();
+    // Obtener los ítems seleccionados del ComboBox (asumiendo que usa una clase ItemTipoDocumento y ItemCobase)
+    ItemTipoDocumento tipoDoc = (ItemTipoDocumento) CbxTipoDocumento.getSelectedItem();
+    ItemCobase cobase = (ItemCobase) CbxCobase.getSelectedItem();
+   
+    // Convertir hectáreas (debe ser float, usar try-catch para seguridad)
+    float hectarias = 0.0f;
+    try {
+        if (!TxtNumeroDeHectarias.getText().trim().isEmpty()) {
+            hectarias = Float.parseFloat(TxtNumeroDeHectarias.getText().trim());
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Las hectáreas deben ser un número válido.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    if (nombre.isEmpty() || nroDocumento.isEmpty() || tipoDoc == null) {
+        JOptionPane.showMessageDialog(this, "Nombre, Nro. Documento y Tipo de Documento son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // 2. Ejecutar INSERT
+    Connection cn = null;
+    try {
+        cn = Conexion.getConexion();
+        String sql = "INSERT INTO socio (nombre, id_tipoDocumento, nro_documento, id_cobase, telefono, dirección, hectarias, estado) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, '1')"; // Estado '1' por defecto
+        
+        try (PreparedStatement pst = cn.prepareStatement(sql)) {
+            pst.setString(1, nombre);
+            pst.setInt(2, tipoDoc.getId());
+            pst.setString(3, nroDocumento);
+            
+            // Si la co-base es nula (no seleccionada), inserte NULL
+            if (cobase != null) {
+                pst.setInt(4, cobase.getId());
+            } else {
+                pst.setNull(4, java.sql.Types.INTEGER);
+            }
+            
+            pst.setString(5, telefono);
+            pst.setString(6, direccion);
+            pst.setFloat(7, hectarias);
+            
+            pst.executeUpdate();
+            
+            JOptionPane.showMessageDialog(this, "¡Socio registrado correctamente!");
+            limpiarCampos();
+            cargarTablaSocios(); // Asumiendo que tiene un método para recargar la tabla
+            
+        }
+    } catch (SQLException e) {
+        if (e.getErrorCode() == 1062) { // Código de error para duplicado (UNIQUE KEY nro_documento)
+            JOptionPane.showMessageDialog(this, "El número de documento ya está registrado para otro socio.", "Error de Registro", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al registrar el socio: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    } finally {
+        try { if (cn != null) cn.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+    }
+}
+
+private void actualizarSocio() {
+    // 1. Validación de modo Edición
+    if (idSocioAEditar == -1) {
+        JOptionPane.showMessageDialog(this, "Error: No hay socio seleccionado para modificar.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    // 2. Obtener y validar datos (reutilizar la lógica de obtención de registrarSocio)
+    String nombre = TxtNombreSocio.getText().trim();
+    String nroDocumento = TxtNroDocumento.getText().trim();
+    String telefono = TxtNumeroDeCelular.getText().trim();
+    String direccion = TxtDireccion.getText().trim();
+    ItemTipoDocumento tipoDoc = (ItemTipoDocumento) CbxTipoDocumento.getSelectedItem();
+    ItemCobase cobase = (ItemCobase) CbxCobase.getSelectedItem();
+    
+    float hectarias = 0.0f;
+    try {
+        if (!TxtNumeroDeHectarias.getText().trim().isEmpty()) {
+            hectarias = Float.parseFloat(TxtNumeroDeHectarias.getText().trim());
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Las hectáreas deben ser un número válido.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    if (nombre.isEmpty() || nroDocumento.isEmpty() || tipoDoc == null) {
+        JOptionPane.showMessageDialog(this, "Nombre, Nro. Documento y Tipo de Documento son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    
+    // 3. Ejecutar UPDATE
+    Connection cn = null;
+    try {
+        cn = Conexion.getConexion();
+        String sql = "UPDATE socio SET nombre=?, id_tipoDocumento=?, nro_documento=?, id_cobase=?, telefono=?, dirección=?, hectarias=? " +
+                     "WHERE id = ?";
+        
+        try (PreparedStatement pst = cn.prepareStatement(sql)) {
+            pst.setString(1, nombre);
+            pst.setInt(2, tipoDoc.getId());
+            pst.setString(3, nroDocumento);
+            
+            if (cobase != null) {
+                pst.setInt(4, cobase.getId());
+            } else {
+                pst.setNull(4, java.sql.Types.INTEGER);
+            }
+            
+            pst.setString(5, telefono);
+            pst.setString(6, direccion);
+            pst.setFloat(7, hectarias);
+            pst.setInt(8, idSocioAEditar); // Cláusula WHERE para el ID
+            
+            pst.executeUpdate();
+            
+            JOptionPane.showMessageDialog(this, "¡Socio modificado correctamente!");
+            resetearModoEdicion(); // Limpia campos y resetea el botón
+            cargarTablaSocios();
+        }
+    } catch (SQLException e) {
+        if (e.getErrorCode() == 1062) { // Duplicado de nro_documento
+            JOptionPane.showMessageDialog(this, "El número de documento ya está registrado para otro socio.", "Error de Modificación", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al modificar el socio: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    } finally {
+        try { if (cn != null) cn.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+    }
+}
+
+private void cargarSocioParaEditar(int idSocio) {
+    Connection cn = null;
+    try {
+        cn = Conexion.getConexion();
+        String sql = "SELECT s.*, td.nombre AS tipo_doc_nombre, c.nombre AS cobase_nombre " +
+                     "FROM socio s " +
+                     "JOIN tipodocumento td ON s.id_tipoDocumento = td.id " +
+                     "LEFT JOIN cobase c ON s.id_cobase = c.id " +
+                     "WHERE s.id = ?";
+        
+        try (PreparedStatement pst = cn.prepareStatement(sql)) {
+            pst.setInt(1, idSocio);
+            ResultSet rs = pst.executeQuery();
+            
+            if (rs.next()) {
+                // 1. Llenar los campos de texto
+                TxtNombreSocio.setText(rs.getString("nombre"));
+                TxtNroDocumento.setText(rs.getString("nro_documento"));
+                TxtNumeroDeCelular.setText(rs.getString("telefono"));
+                TxtDireccion.setText(rs.getString("dirección"));
+                TxtNumeroDeHectarias.setText(String.valueOf(rs.getFloat("hectarias")));
+                
+                // 2. Seleccionar los ComboBox (Asumiendo que tiene métodos selectByNombre)
+                seleccionarItemPorNombre(CbxTipoDocumento, rs.getString("tipo_doc_nombre"));
+                seleccionarItemPorNombre(CbxCobase, rs.getString("cobase_nombre"));
+                
+                // 3. Activar Modo Edición
+                this.idSocioAEditar = idSocio;
+                habilitarModoEdicionSocio(); 
+            }
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar los datos del socio: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    } finally {
+        try { if (cn != null) cn.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+    }
+}
+
+private void seleccionarItemPorNombre(javax.swing.JComboBox<?> cbx, String nombre) {
+    if (nombre == null || nombre.trim().isEmpty()) {
+        cbx.setSelectedIndex(-1); // No seleccionar nada si el valor es nulo
+        return;
+    }
+    // Lógica que recorre el ComboBoxModel y selecciona el item cuyo getNombre() coincida
+    for (int i = 0; i < cbx.getItemCount(); i++) {
+        Object item = cbx.getItemAt(i);
+        // Debe castear el item para acceder al método getNombre()
+        // Ejemplo genérico, ajuste según sus clases ItemCobase/ItemTipoDocumento:
+        try {
+            java.lang.reflect.Method getNombre = item.getClass().getMethod("getNombre");
+            String itemNombre = (String) getNombre.invoke(item);
+            if (itemNombre.equals(nombre)) {
+                cbx.setSelectedItem(item);
+                return;
+            }
+        } catch (Exception e) {
+            // Manejo de error o simplemente ignorar si el item no tiene getNombre()
+        }
+    }
+}
+
+private void habilitarModoEdicionSocio() {
+    BtnAgregarSocio.setText("GUARDAR CAMBIOS"); // Cambiar el texto del botón principal
+    // Opcional: Puede deshabilitar TxtNroDocumento para evitar cambiar la clave principal si es crítico
+    // TxtNroDocumento.setEnabled(false); 
+}
+
+private void resetearModoEdicion() {
+    // 1. Limpiar campos
+    limpiarCampos(); // Asumiendo que existe un método para limpiar todos los JTextField
+    
+    // 2. Restablecer el estado de edición
+    idSocioAEditar = -1;
+    
+    // 3. Deshacer la transición
+    BtnAgregarSocio.setText("Agregar Socio"); 
+    // TxtNroDocumento.setEnabled(true); // Re-habilitar si lo deshabilitó antes
+}
+
+private void limpiarCampos() {
+        TxtNombreSocio.setText("");
+        TxtNroDocumento.setText("");
+        TxtNumeroDeCelular.setText("");
+        TxtDireccion.setText("");
+        TxtNumeroDeHectarias.setText("");
+    }
+    
+private void cargarTablaSocios() {
+    // 1. Definir títulos de columna
+    String[] titulos = {"ID", "Nombre", "Tipo Doc.", "Nro. Documento", "Co-Base", "Celular", "Hectáreas", "Estado"};
+    DefaultTableModel modelo = new DefaultTableModel(null, titulos) {
+        // Bloquear la edición directa de celdas
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    
+    // Asumiendo que su tabla se llama TblSocios
+    TblSocios.setModel(modelo);
+
+    Connection cn = null;
+    try {
+        cn = Conexion.getConexion();
+        // 2. Consulta SQL con JOINS
+        String sql = "SELECT s.id, s.nombre, td.nombre AS tipo_documento, s.nro_documento, " +
+                     "c.nombre AS cobase, s.telefono, s.hectarias, s.estado " +
+                     "FROM socio s " +
+                     "JOIN tipodocumento td ON s.id_tipoDocumento = td.id " +
+                     "LEFT JOIN cobase c ON s.id_cobase = c.id " + // LEFT JOIN para socios sin Co-base asignada
+                     "ORDER BY s.nombre";
+
+        try (PreparedStatement pst = cn.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
+
+            // 3. Llenar el modelo de tabla
+            while (rs.next()) {
+                // Convertir el estado de 1/0 a Activo/Inactivo si es necesario
+                String estadoStr = rs.getString("estado").equals("1") ? "ACTIVO" : "INACTIVO";
+                
+                modelo.addRow(new Object[]{
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("tipo_documento"),
+                    rs.getString("nro_documento"),
+                    rs.getString("cobase") != null ? rs.getString("cobase") : "N/A", // Manejar nulo para Co-base
+                    rs.getString("telefono"),
+                    rs.getFloat("hectarias"),
+                    estadoStr
+                });
+            }
+        }
+        // 4. Configurar la apariencia de la tabla
+        configurarTablaSocios(); 
+        
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error cargando la tabla de socios: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        try { if (cn != null) cn.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+    }
+}
+    
+private void exportarSocioACSV() {
+    JFileChooser fileChooser = new JFileChooser();
+    
+    // 1. Configurar el diálogo para guardar
+    fileChooser.setDialogTitle("Guardar Reporte de Socios");
+    fileChooser.setSelectedFile(new File("Reporte_Socios.csv"));
+    
+    // Filtro para asegurar la extensión .csv
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
+    fileChooser.addChoosableFileFilter(filter);
+    
+    // Mostrar el diálogo y esperar la acción del usuario
+    int userSelection = fileChooser.showSaveDialog(this);
+
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+        File fileToSave = fileChooser.getSelectedFile();
+        
+        // Asegurar que el archivo tenga la extensión .csv
+        if (!fileToSave.getName().toLowerCase().endsWith(".csv")) {
+            fileToSave = new File(fileToSave.toString() + ".csv");
+        }
+
+        // ==========================================================
+        //  NUEVA LÓGICA DE RENOMBRADO AUTOMÁTICO
+        // ==========================================================
+        if (fileToSave.exists()) {
+            
+            // Si el JFileChooser ya emitió una advertencia y el usuario seleccionó Sobrescribir,
+            // esta lógica no es estrictamente necesaria. Pero si queremos forzar el
+            // guardado con un nuevo nombre sin preguntar:
+            
+            String path = fileToSave.getAbsolutePath();
+            String extension = "";
+            String baseName = path;
+
+            // Separar nombre base y extensión
+            int dotIndex = path.lastIndexOf('.');
+            if (dotIndex > 0) {
+                extension = path.substring(dotIndex);
+                baseName = path.substring(0, dotIndex);
+            }
+
+            int counter = 1;
+            File uniqueFile = fileToSave;
+
+            // Bucle para buscar un nombre único (ej. Reporte_Socios (1).csv)
+            while (uniqueFile.exists()) {
+                String newPath = baseName + " (" + counter + ")" + extension;
+                uniqueFile = new File(newPath);
+                counter++;
+            }
+            
+            // Usamos el archivo con el nombre único encontrado
+            fileToSave = uniqueFile;
+            
+            // Informar al usuario que el archivo fue renombrado
+            JOptionPane.showMessageDialog(this, 
+                "El archivo ya existía. Se guardará como:\n" + fileToSave.getName(), 
+                "Archivo Renombrado", 
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+        // ==========================================================
+        //  FIN DE LA LÓGICA DE RENOMBRADO
+        // ==========================================================
+
+        Connection cn = null;
+        FileWriter writer = null;
+
+        try {
+            cn = Conexion.getConexion();
+            // Escribe en el archivo fileToSave (que ahora es único)
+            writer = new FileWriter(fileToSave); 
+
+            // 2. Consulta SQL (la misma que usamos para cargar la tabla)
+            String sql = "SELECT s.id, s.nombre, td.nombre AS tipo_documento, s.nro_documento, " +
+                         "c.nombre AS cobase, s.telefono, s.dirección, s.hectarias, s.estado " +
+                         "FROM socio s " +
+                         "JOIN tipodocumento td ON s.id_tipoDocumento = td.id " +
+                         "LEFT JOIN cobase c ON s.id_cobase = c.id " +
+                         "ORDER BY s.id";
+
+            try (PreparedStatement pst = cn.prepareStatement(sql);
+                 ResultSet rs = pst.executeQuery()) {
+
+                // 3. Escribir la cabecera del CSV (Títulos)
+                writer.append("ID,Nombre,Tipo Documento,Nro. Documento,Co-Base,Teléfono,Dirección,Hectáreas,Estado\n");
+
+                // 4. Escribir los datos del ResultSet
+                while (rs.next()) {
+                    String estadoStr = rs.getString("estado").equals("1") ? "ACTIVO" : "INACTIVO";
+                    
+                    // Formato de la línea CSV: ID,NOMBRE,"TIPO DOC",...
+                    String linea = rs.getInt("id") + ","
+                                 + "\"" + rs.getString("nombre") + "\"," // Usar comillas para nombres con comas
+                                 + "\"" + rs.getString("tipo_documento") + "\","
+                                 + rs.getString("nro_documento") + ","
+                                 + "\"" + (rs.getString("cobase") != null ? rs.getString("cobase") : "N/A") + "\","
+                                 + rs.getString("telefono") + ","
+                                 + "\"" + rs.getString("dirección") + "\","
+                                 + rs.getFloat("hectarias") + ","
+                                 + estadoStr + "\n";
+                                 
+                    writer.append(linea);
+                }
+                
+                JOptionPane.showMessageDialog(this, 
+                    "Reporte de Socios exportado exitosamente a:\n" + fileToSave.getAbsolutePath(), 
+                    "Exportación Exitosa", 
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (SQLException e) {
+                 JOptionPane.showMessageDialog(this, "Error al leer datos de la base de datos: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error de escritura de archivo: " + e.getMessage(), "Error I/O", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocurrió un error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            // 5. Cerrar recursos (FileWriter y Connection)
+            try {
+                if (writer != null) writer.close();
+                if (cn != null) cn.close();
+            } catch (SQLException | IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+}
+
+private void exportarSocioSeleccionadoACSV() {
+    int fila = TblSocios.getSelectedRow();
+    
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar una fila de la tabla para generar la ficha.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int idSocio;
+    String nombreSocio;
+    try {
+        idSocio = (int) TblSocios.getValueAt(fila, 0);
+        nombreSocio = (String) TblSocios.getValueAt(fila, 1);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al obtener el ID o nombre del socio de la tabla.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    // 1. Configurar JFileChooser
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Guardar Ficha de Socio");
+    String nombreArchivo = "Ficha_Socio_" + nombreSocio.replace(" ", "_").replace("\"", "") + ".csv";
+    fileChooser.setSelectedFile(new File(nombreArchivo));
+    
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
+    fileChooser.addChoosableFileFilter(filter);
+    
+    int userSelection = fileChooser.showSaveDialog(this);
+
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+        File fileToSave = fileChooser.getSelectedFile();
+        if (!fileToSave.getName().toLowerCase().endsWith(".csv")) {
+            fileToSave = new File(fileToSave.toString() + ".csv");
+        }
+
+        // ==========================================================
+        //  NUEVA LÓGICA DE RENOMBRADO AUTOMÁTICO
+        // ==========================================================
+        if (fileToSave.exists()) {
+            
+            String path = fileToSave.getAbsolutePath();
+            String extension = "";
+            String baseName = path;
+
+            // Separar nombre base y extensión
+            int dotIndex = path.lastIndexOf('.');
+            if (dotIndex > 0) {
+                extension = path.substring(dotIndex);
+                baseName = path.substring(0, dotIndex);
+            }
+            
+            // Opcional: Remover sufijos de números anteriores si existen (ej. (1))
+            // Para asegurar que Ficha_Socio (1) se convierta a Ficha_Socio (2)
+            baseName = baseName.replaceAll(" \\(\\d+\\)$", ""); 
+
+            int counter = 1;
+            File uniqueFile = fileToSave;
+
+            // Bucle para buscar un nombre único (ej. Ficha_Socio_... (1).csv)
+            while (uniqueFile.exists()) {
+                String newPath = baseName + " (" + counter + ")" + extension;
+                uniqueFile = new File(newPath);
+                counter++;
+            }
+            
+            fileToSave = uniqueFile;
+            
+            JOptionPane.showMessageDialog(this, 
+                "El archivo ya existía. La ficha se guardará como:\n" + fileToSave.getName(), 
+                "Archivo Renombrado", 
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+        // ==========================================================
+
+        Connection cn = null;
+        try {
+            cn = Conexion.getConexion();
+            
+            // 2. Consulta SQL para obtener todos los detalles del socio
+            String sql = "SELECT s.*, td.nombre AS tipo_documento, c.nombre AS cobase " +
+                         "FROM socio s " +
+                         "JOIN tipodocumento td ON s.id_tipoDocumento = td.id " +
+                         "LEFT JOIN cobase c ON s.id_cobase = c.id " +
+                         "WHERE s.id = ?";
+            
+            try (PreparedStatement pst = cn.prepareStatement(sql)) {
+                pst.setInt(1, idSocio);
+                
+                try (ResultSet rs = pst.executeQuery()) {
+                    
+                    if (rs.next()) {
+                        // 3. Obtener todos los datos necesarios
+                        String nombreCompleto = rs.getString("nombre");
+                        String tipoDoc = rs.getString("tipo_documento");
+                        String nroDoc = rs.getString("nro_documento");
+                        String celular = rs.getString("telefono");
+                        String direccion = rs.getString("dirección");
+                        String cobase = rs.getString("cobase") != null ? rs.getString("cobase") : "No Asignada";
+                        float hectareas = rs.getFloat("hectarias");
+                        String estado = rs.getString("estado").equals("1") ? "ACTIVO" : "INACTIVO";
+                        
+                        // 4. Escribir el archivo con formato (usando fileToSave, que puede haber sido renombrado)
+                        try (PrintWriter pw = new PrintWriter(fileToSave, "UTF-8")) {
+                            
+                            // === CABECERA ===
+                            pw.println("COOPERATIVA AGRARIA CAFÉ BAQUA GRANDE LTDA.");
+                            pw.println("FICHA DE SOCIO DEL SISTEMA");
+                            pw.println();
+                            
+                            // === INFORMACIÓN PERSONAL ===
+                            pw.println("INFORMACIÓN PERSONAL");
+                            pw.println("Nombre completo:," + "\"" + nombreCompleto + "\"");
+                            pw.println("Tipo de documento:," + "\"" + tipoDoc + "\"");
+                            pw.println("Número de documento:," + nroDoc);
+                            pw.println("Número de celular:," + celular);
+                            pw.println("Dirección:," + "\"" + direccion + "\"");
+                            pw.println();
+                            
+                            // === DATOS DE AFILIACIÓN Y PRODUCCIÓN ===
+                            pw.println("DATOS DE AFILIACIÓN Y PRODUCCIÓN");
+                            pw.println("ID de Socio:," + idSocio);
+                            pw.println("Co-base asignada:," + "\"" + cobase + "\"");
+                            pw.println("Hectáreas registradas:," + hectareas + " ha");
+                            pw.println("Estado del socio:," + estado);
+                            pw.println();
+
+                            // === METADATOS ===
+                            pw.println("Fecha de generación del reporte:," + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+                        }
+
+                        JOptionPane.showMessageDialog(this, 
+                            "Ficha de Socio exportada exitosamente a:\n" + fileToSave.getAbsolutePath(), 
+                            "Exportación Exitosa", 
+                            JOptionPane.INFORMATION_MESSAGE);
+                        
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Error: No se encontraron datos para el socio seleccionado.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+             JOptionPane.showMessageDialog(this, "Error al leer datos de la base de datos: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error de escritura de archivo: " + e.getMessage(), "Error I/O", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocurrió un error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            try {
+                if (cn != null) cn.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+}
+
 }

@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import Conexion.Conexion; // Asegúrate que este import coincida con tu paquete
 import Entidades.Sesion;
 import Interfaces_Administrador.Menu_Administrador;
+import java.security.MessageDigest;
+import java.util.Base64;
 /**
  *
  * @author jheff
@@ -213,6 +215,13 @@ private final String TEXTO_SECRETO = "     "; // Aquí hay 5 espacios, por ejemp
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnIniciarActionPerformed
+
+        intentarLogin();
+        
+        
+        
+        
+        /*
 // 1. OBTENER DATOS DE LA INTERFAZ
     String usuario = txtUsuario.getText().trim(); // Usuario
     // NOTA: Si usas JPasswordField, usa getPassword() y conviértelo a String
@@ -300,6 +309,7 @@ if (rs.next()) {
             System.out.println("Error al cerrar recursos: " + ex.getMessage());
         }
     }
+    */
 
     }//GEN-LAST:event_BtnIniciarActionPerformed
 
@@ -393,4 +403,122 @@ private void cargarRoles() {
     private javax.swing.JPasswordField txtContraseña;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
+
+// Su método hashPassword (asegúrese de que esté accesible en la clase Login)
+private String hashPassword(String password) {
+    try {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(password.getBytes());
+        return Base64.getEncoder().encodeToString(hash);
+    } catch (Exception e) {
+        // En un entorno productivo, esto DEBE manejar el error y no devolver la contraseña plana.
+        // Aquí se devuelve una cadena vacía o se lanza una RuntimeException.
+        e.printStackTrace();
+        return ""; 
+    }
+}
+
+// Su método de manejo del login (ej. btnAceptarActionPerformed)
+private void intentarLogin() {
+    // 1. OBTENER DATOS DE LA INTERFAZ
+    String usuario = txtUsuario.getText().trim();
+    char[] passwordChars = txtContraseña.getPassword();
+    String contrasenia = new String(passwordChars).trim();
+    String rolSeleccionado = cbxTipoUsuario.getSelectedItem().toString();
+
+    // 2. MANEJAR EL ROL OCULTO (Mapeo de la Interfaz a la DB)
+    String rolDB = rolSeleccionado;
+    // Asumimos que TEXTO_SECRETO es una constante definida
+    if (rolSeleccionado.equals(TEXTO_SECRETO)) { 
+        rolDB = "Master";
+    }
+
+    Connection cn = null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
+
+    try {
+        // 3. GENERAR EL HASH DE LA CONTRASEÑA INGRESADA
+        String hashIngresado = hashPassword(contrasenia); 
+        
+        // ** Validar si el hashing falló (si devolvió un string vacío) **
+        if (hashIngresado.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Error interno de seguridad al procesar la contraseña.", "Error de Hash", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+
+        cn = Conexion.getConexion();
+        
+        // 4. CONSULTA DE VALIDACIÓN (Buscar el usuario ACTIVO con ese Rol y obtener su HASH de la BD)
+        // NOTA: Se elimina el parámetro de contraseña/hash de la cláusula WHERE.
+        String sql = "SELECT u.id, u.Usuario, u.contraseña AS hash_almacenado, u.id_rol, r.nombre AS Rol_Nombre " +
+                     "FROM usuarios u " +
+                     "JOIN roles r ON u.id_rol = r.id " +
+                     "WHERE u.Usuario = ? AND r.nombre = ? AND u.estado = '1'  LIMIT 1";
+
+        pst = cn.prepareStatement(sql);
+        pst.setString(1, usuario);
+        pst.setString(2, rolDB);
+
+        rs = pst.executeQuery();
+
+        if (rs.next()) {
+            // 5. COMPARACIÓN DE HASHES (Validación final)
+            String hashAlmacenado = rs.getString("hash_almacenado");
+            
+            if (hashAlmacenado.equals(hashIngresado)) {
+                 // AUTENTICACIÓN EXITOSA
+                
+                // 6. ESTABLECER LA SESIÓN EN MEMORIA (Clase Sesion)
+                Sesion.userId = rs.getInt("id");
+                Sesion.userNombre = rs.getString("Usuario");
+                Sesion.userRol = rs.getString("Rol_Nombre"); 
+                Sesion.rolId = rs.getInt("id_rol");
+                
+                // 7. REDIRECCIÓN CONDICIONAL BASADA EN EL ROL
+                String rolUsuario = Sesion.userRol;
+                
+                if (rolUsuario.equalsIgnoreCase("Administrador") || rolUsuario.equalsIgnoreCase("Master")) {
+                    Menu_Administrador menuAdmin = new Menu_Administrador();
+                    menuAdmin.setVisible(true);
+                    this.dispose();
+                    
+                } else if (rolUsuario.equalsIgnoreCase("Almacenero")) {
+                    Menu_Almacenero menuAlmac = new Menu_Almacenero();
+                    menuAlmac.setVisible(true);
+                    this.dispose();
+                    
+                } else {
+                    JOptionPane.showMessageDialog(null, "Rol de usuario no tiene un menú asignado.", "Error de Configuración", JOptionPane.WARNING_MESSAGE);
+                    Sesion.cerrarSesion();
+                }
+
+            } else {
+                // HASH no coincide
+                JOptionPane.showMessageDialog(null, "Contraseña incorrecta.", "Error de Login", JOptionPane.ERROR_MESSAGE);
+                txtContraseña.setText("");
+            }
+
+        } else {
+            // Usuario o Rol no encontrado/inactivo
+            JOptionPane.showMessageDialog(null, "Usuario o Rol incorrectos o usuario inactivo.", "Error de Login", JOptionPane.ERROR_MESSAGE);
+            txtContraseña.setText("");
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error en la conexión o consulta de Login: " + e.getMessage());
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (pst != null) pst.close();
+            if (cn != null) cn.close();
+        } catch (SQLException ex) {
+            System.out.println("Error al cerrar recursos: " + ex.getMessage());
+        }
+    }
+}
+
+
+
 }
